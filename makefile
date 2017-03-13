@@ -1,10 +1,12 @@
-all: clean encode decode
+CC=gcc
 
-readMsg: stego.c readMsg.c
-	$(CC) -o readMsg stego.c readMsg.c
+all: clean hide unhide
 
-writeMsg: stego.c writeMsg.c
-	$(CC) -o writeMsg stego.c writeMsg.c
+hide: hide.c ppmHide.c common.c ppmCommon.c
+	$(CC) -o hide hide.c common.c ppmHide.c ppmCommon.c bmpHide.c bmpCommon.c
+
+writeMsg: unhide.c ppmUnhide.c common.c ppmCommon.c
+	$(CC) -o unhide unhide.c ppmUnhide.c common.c ppmCommon.c
 
 clean:
-	rm -f readMsg writeMsg out.ppm
+	rm -f hide unhide outfile.ppm

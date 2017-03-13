@@ -10,10 +10,7 @@
 #define PPM_COLOR_DEPTH 255
 
 void hideInPpm(FILE *file, char *message) {
-
-    struct ImageInfo imageInfo;
-
-    imageInfo = getImageInfo(file);
+    struct ImageInfo imageInfo = getPpmImageInfo(file);
 
     if (imageInfo.depth != PPM_COLOR_DEPTH) {
         errorAndExit("Image colour depth must be 255");
@@ -25,12 +22,12 @@ void hideInPpm(FILE *file, char *message) {
 
     printImageInfo(&imageInfo);
 
-    encodeImage(file, imageInfo, message);
+    encodePpmImage(file, imageInfo, message);
 
     fclose(file);
 }
 
-void encodeImage(FILE *file, struct ImageInfo imageInfo, char *message) {
+void encodePpmImage(FILE *file, struct ImageInfo imageInfo, char *message) {
     FILE *outfile = fopen("outfile.ppm", "w+");
 
     if (outfile == NULL) {
@@ -60,22 +57,6 @@ void encodeImage(FILE *file, struct ImageInfo imageInfo, char *message) {
         fputc(nextByte, outfile);
     }
     fclose(outfile);
-}
-
-void copyHeader(FILE *file, FILE *outfile, struct ImageInfo imageInfo) {
-    int nextByte;
-    long charsCopied = 0;
-
-    rewind(file);
-
-    while ((nextByte = fgetc(file))!=EOF && charsCopied < imageInfo.imageMapPosition)
-    {
-        fputc(nextByte, outfile);
-        charsCopied++;
-    }
-    if (nextByte == EOF) {
-        errorAndExit("Unexpected end of file");
-    }
 }
 
 bool doesMessageFit(struct ImageInfo info, char *message) {

@@ -23,9 +23,7 @@ enum ImageType {
 #endif //ASS1_COMMON_H
 
 enum ImageType getImageType(FILE *file);
-
 void errorAndExit(char error[]);
-
 void printImageInfo(struct ImageInfo *imageInfo);
-
+void copyHeader(FILE *file, FILE *outfile, struct ImageInfo imageInfo);
 void printByteBits(int byte);

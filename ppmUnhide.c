@@ -11,7 +11,7 @@
 void unhidePpm(FILE *file) {
     struct ImageInfo imageInfo;
 
-    imageInfo = getImageInfo(file);
+    imageInfo = getPpmImageInfo(file);
 
     if (imageInfo.depth != PPM_COLOR_DEPTH) {
         errorAndExit("Image colour depth must be 255");

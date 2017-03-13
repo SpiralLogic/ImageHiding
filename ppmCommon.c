@@ -7,8 +7,7 @@
 #include "common.h"
 #include "ppmCommon.h"
 
-
-struct ImageInfo getImageInfo(FILE *file) {
+struct ImageInfo getPpmImageInfo(FILE *file) {
     struct ImageInfo imageInfo = {.height = 0, .width =0, .depth = 0, .imageMapPosition = 0};
     bool headerComplete = false;
     int nextChar;

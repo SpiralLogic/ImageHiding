@@ -10,4 +10,4 @@
 
 void moveFileToNextLine(FILE *file);
 int scanDimension(FILE *file);
-struct ImageInfo getImageInfo(FILE *file);
+struct ImageInfo getPpmImageInfo(FILE *file);
