@@ -31,6 +31,6 @@ void printByteBits(int byte) {
 }
 
 void errorAndExit(char error[]) {
-    printf("Error: %s\n", error);
+    fprintf(stderr, "Error: %s\n", error);
     exit(1);
 }
