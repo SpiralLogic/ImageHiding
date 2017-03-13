@@ -11,6 +11,3 @@
 #endif //ASS1_BMPHIDE_H
 
 void hideInBmp(FILE *file, char *message);
-void encodePpmImage(FILE *file, struct ImageInfo imageInfo, char *message);
-void copyHeader(FILE *file, FILE *outfile, struct ImageInfo imageInfo);
-bool doesMessageFit(struct ImageInfo info, char *message);

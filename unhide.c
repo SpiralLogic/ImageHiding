@@ -1,9 +1,11 @@
-#include <stdio.h>
-#include "ppmUnhide.h"
 #include "common.h"
+#include "ppmUnhide.h"
+#include "bmpUnhide.h"
 
 int main(int argc, char *argv[]) {
     char *imageFile;
+    enum ImageType imageType;
+
 
     if (argc < 2) {
         errorAndExit("Not enough arguments passed");
@@ -17,11 +19,18 @@ int main(int argc, char *argv[]) {
         errorAndExit("Cannot open file");
     }
 
-    if (getImageType(file) == unsupported) {
+    imageType = getImageType(file);
+
+    if (imageType == unsupported) {
         errorAndExit("Image type unsupported");
     }
+    if (imageType == ppm) {
+        unhidePpm(file);
 
-    unhidePpm(file);
+    } else if (imageType == bmp) {
+        unhideBmp(file);
+    }
+
 
     return 0;
 }

@@ -11,4 +11,3 @@
 #include "common.h"
 
 void unhidePpm(FILE *file);
-void decodeImage(FILE *file, struct ImageInfo imageInfo);

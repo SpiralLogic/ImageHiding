@@ -2,6 +2,7 @@
 // Created by Sol Jennings on 13/3/17.
 //
 
+#include <stdlib.h>
 #include "common.h"
 
 enum ImageType getImageType(FILE *file) {
@@ -34,22 +35,6 @@ void printByteBits(int byte) {
         printf("%d",(byte << j & 0x80)/ 0x80);
     }
     printf("\n");
-}
-
-void copyHeader(FILE *file, FILE *outfile, struct ImageInfo imageInfo) {
-    int nextByte;
-    long charsCopied = 0;
-
-    rewind(file);
-
-    while ((nextByte = fgetc(file)) != EOF && charsCopied < imageInfo.imageMapPosition)
-    {
-        fputc(nextByte, outfile);
-        charsCopied++;
-    }
-    if (nextByte == EOF) {
-        errorAndExit("Unexpected end of file");
-    }
 }
 
 

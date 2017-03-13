@@ -2,7 +2,6 @@
 // Created by Sol Jennings on 13/3/17.
 //
 #include <stdio.h>
-#include <stdlib.h>
 
 #ifndef ASS1_COMMON_H
 #define ASS1_COMMON_H
@@ -25,5 +24,4 @@ enum ImageType {
 enum ImageType getImageType(FILE *file);
 void errorAndExit(char error[]);
 void printImageInfo(struct ImageInfo *imageInfo);
-void copyHeader(FILE *file, FILE *outfile, struct ImageInfo imageInfo);
 void printByteBits(int byte);

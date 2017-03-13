@@ -2,8 +2,8 @@
 // Created by Sol Jennings on 13/3/17.
 //
 
-#include <memory.h>
 #include "common.h"
+#include "commonHide.h"
 #include "bmpCommon.h"
 #include "bmpHide.h"
 
@@ -14,21 +14,17 @@ void hideInBmp(FILE *file, char *message){
 
     printImageInfo(&imageInfo);
 
-    
+
     if (imageInfo.depth != BMP_COLOR_DEPTH) {
-        errorAndExit("Image colour depth must be 255");
+        errorAndExit("Image must be 24 bit");
     }
-/*
 
     if (!doesMessageFit(imageInfo, message)) {
         errorAndExit("Message does not fit image");
     }
-*/
 
-/*
-
-    encodeBmpImage(file, imageInfo, message);
-*/
+    encodeImage(file, imageInfo, "output.bmp", message);
 
     fclose(file);
 };
+

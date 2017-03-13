@@ -4,6 +4,7 @@
 
 #include <memory.h>
 #include "common.h"
+#include "commonHide.h"
 #include "ppmCommon.h"
 #include "ppmHide.h"
 
@@ -22,50 +23,7 @@ void hideInPpm(FILE *file, char *message) {
 
     printImageInfo(&imageInfo);
 
-    encodePpmImage(file, imageInfo, message);
+    encodeImage(file, imageInfo, "output.ppm", message);
 
     fclose(file);
-}
-
-void encodePpmImage(FILE *file, struct ImageInfo imageInfo, char *message) {
-    FILE *outfile = fopen("outfile.ppm", "w+");
-
-    if (outfile == NULL) {
-        errorAndExit("Cannot open output file");
-    }
-
-    copyHeader(file, outfile, imageInfo);
-
-    int messageLength = (int) strlen(message) + 1;
-    int messageBit;
-    int nextByte;
-    for (int i=0; i < messageLength; i++) {
-        for (int j = 0; j < 8; j++) {
-            messageBit = (message[i] << j & 0x80)/0x80;
-            nextByte = getc(file);
-            if (nextByte == EOF) {
-                fclose(outfile);
-                remove("outfile.ppm");
-                errorAndExit("Cannot encode into an incomplete image");
-            }
-            nextByte = (nextByte & 0xFE) | messageBit;
-            putc(nextByte, outfile);
-        }
-    }
-
-    while ((nextByte = fgetc(file)) != EOF) {
-        fputc(nextByte, outfile);
-    }
-    fclose(outfile);
-}
-
-bool doesMessageFit(struct ImageInfo info, char *message) {
-
-    if (strlen(message) > sizeof(int) * 8) {
-        return false;
-    }
-
-    int length = (int) strlen(message) + 1;
-
-    return (length * 8) < (info.height * info.width * 3);
 }

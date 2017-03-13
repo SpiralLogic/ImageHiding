@@ -12,5 +12,3 @@
 #endif //ASS1_PPMHIDE_H
 
 void hideInPpm(FILE *file, char *message);
-void encodePpmImage(FILE *file, struct ImageInfo imageInfo, char *message);
-bool doesMessageFit(struct ImageInfo info, char *message);
