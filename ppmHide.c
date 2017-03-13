@@ -11,24 +11,21 @@
 
 void hideInPpm(FILE *file, char *message) {
 
-    struct ImageInfo imageSize;
+    struct ImageInfo imageInfo;
 
-    imageSize = getImageInfo(file);
+    imageInfo = getImageInfo(file);
 
-    if (imageSize.depth != PPM_COLOR_DEPTH) {
+    if (imageInfo.depth != PPM_COLOR_DEPTH) {
         errorAndExit("Image colour depth must be 255");
     }
 
-    if (!doesMessageFit(imageSize, message)) {
+    if (!doesMessageFit(imageInfo, message)) {
         errorAndExit("Message does not fit image");
     }
 
-    printf("width %d\n", imageSize.width);
-    printf("height %d\n", imageSize.height);
-    printf("depth %d\n", imageSize.depth);
-    printf("header lines %ld\n", imageSize.imageMapPosition);
+    printImageInfo(&imageInfo);
 
-    encodeImage(file, imageSize, message);
+    encodeImage(file, imageInfo, message);
 
     fclose(file);
 }

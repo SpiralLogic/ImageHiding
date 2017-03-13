@@ -17,10 +17,7 @@ void unhidePpm(FILE *file) {
         errorAndExit("Image colour depth must be 255");
     }
 
-    printf("width %d\n", imageInfo.width);
-    printf("height %d\n", imageInfo.height);
-    printf("depth %d\n", imageInfo.depth);
-    printf("image map position: %ld\n", imageInfo.imageMapPosition);
+    printImageInfo(&imageInfo);
 
     decodeImage(file, imageInfo);
 

@@ -26,4 +26,6 @@ enum ImageType getImageType(FILE *file);
 
 void errorAndExit(char error[]);
 
+void printImageInfo(struct ImageInfo *imageInfo);
+
 void printByteBits(int byte);

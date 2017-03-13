@@ -16,6 +16,13 @@ enum ImageType getImageType(FILE *file) {
     return imageType;
 }
 
+void printImageInfo(struct ImageInfo *imageSize) {
+    printf("width %d\n", (*imageSize).width);
+    printf("height %d\n", (*imageSize).height);
+    printf("depth %d\n", (*imageSize).depth);
+    printf("header lines %ld\n", (*imageSize).imageMapPosition);
+}
+
 void printByteBits(int byte) {
     for (int j = 0; j < 8; j++) {
         printf("%d",(byte << j & 0x80)/ 0x80);
