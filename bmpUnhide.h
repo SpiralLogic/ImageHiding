@@ -5,9 +5,10 @@
 #ifndef ASS1_BMPUNHIDE_H
 #define ASS1_BMPUNHIDE_H
 
-#endif //ASS1_BMPUNHIDE_H
-
 #include <stdio.h>
 #include "common.h"
 
 void unhideBmp(FILE *file);
+
+#endif //ASS1_BMPUNHIDE_H
+
