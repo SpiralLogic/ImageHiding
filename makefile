@@ -17,4 +17,4 @@ unhidedebug: unhide.c ppmUnhide.c common.c ppmCommon.c
 	$(CC) -o -dDEBUG unhide unhide.c common.c commonUnhide.c ppmCommon.c ppmUnhide.c bmpUnhide.c bmpCommon.c
 
 clean:
-	rm -f hide unhide outfile.ppm
+	rm -f hide unhide outfile.* output.*

@@ -16,8 +16,9 @@
 void hideInBmp(FILE *file, char *message){
     struct ImageInfo imageInfo = getBmpImageInfo(file);
 
+    #ifdef DEBUG
     printImageInfo(&imageInfo);
-
+    #endif
 
     if (imageInfo.depth != BMP_COLOR_DEPTH) {
         errorAndExit("Image must be 24 bit");
