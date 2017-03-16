@@ -10,26 +10,24 @@
 #define BMP_OUTPUT_FILE "output.bmp"
 #define BMP_COLOR_DEPTH 24
 
-// Hides the given message in a bmp file
+// Hides the given message in a bmp file_ptr
 // only 24 bit BMPs are support as these are the most popular and follow the same
 // pixel map structure as a PPM
-void hideInBmp(FILE *file, char *message){
-    struct ImageInfo imageInfo = getBmpImageInfo(file);
+void hideInBmp(FILE *file_ptr, char *message){
+    struct ImageInfo imageInfo = getBmpImageInfo(file_ptr);
 
     #ifdef DEBUG
     printImageInfo(&imageInfo);
     #endif
 
     if (imageInfo.depth != BMP_COLOR_DEPTH) {
-        errorAndExit("Image must be 24 bit");
+        errorAndExit("Image must be 24 bit", file_ptr);
     }
 
-    if (!doesMessageFit(imageInfo, message)) {
-        errorAndExit("Message does not fit image");
+    if (!doesMessageFit(&imageInfo, message)) {
+        errorAndExit("Message does not fit image", file_ptr);
     }
 
-    encodeImage(file, imageInfo, BMP_OUTPUT_FILE, message);
-
-    fclose(file);
+    encodeImage(file_ptr, &imageInfo, BMP_OUTPUT_FILE, message);
 };
 

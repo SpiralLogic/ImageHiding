@@ -6,12 +6,12 @@
 #include "common.h"
 
 // Gets the type of image based on the magic number read from the file header
-enum ImageType getImageType(FILE *file) {
+enum ImageType getImageType(FILE *file_ptr) {
     int firstChar, secondChar;
-    rewind(file);
+    rewind(file_ptr);
 
-    firstChar = getc(file);
-    secondChar = getc(file);
+    firstChar = getc(file_ptr);
+    secondChar = getc(file_ptr);
 
     if (firstChar == 'P' && secondChar == '6') {
         return ppm;
@@ -25,13 +25,21 @@ enum ImageType getImageType(FILE *file) {
 }
 
 // Prints an error message and exits. Also puts the error message in stderr
-void errorAndExit(char error[]) {
+// Also closes a file if it is open
+void errorAndExit(char *error, FILE *file_ptr) {
+    if (file_ptr != NULL) {
+        fclose(file_ptr);
+    }
     fprintf(stderr, "Error: %s\n", error);
     exit(1);
 }
 
 // Prints a message and exits
-void messageAndExit(char message[]) {
+// Also closes a file if it is open
+void messageAndExit(char *message, FILE *file_ptr) {
+    if (file_ptr != NULL) {
+        fclose(file_ptr);
+    }
     fprintf(stdout, "%s\n", message);
     exit(0);
 }

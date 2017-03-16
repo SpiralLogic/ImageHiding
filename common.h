@@ -20,9 +20,9 @@ enum ImageType {
 };
 
 
-enum ImageType getImageType(FILE *file);
-void errorAndExit(char error[]);
-void messageAndExit(char message[]);
+enum ImageType getImageType(FILE *file_ptr);
+void errorAndExit(char *error, FILE *file_ptr);
+void messageAndExit(char *message, FILE *file_ptr);
 void printImageInfo(struct ImageInfo *imageInfo);
 #ifdef DEBUG
 void printByteBits(int byte);

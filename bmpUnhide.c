@@ -10,20 +10,19 @@
 #define BMP_COLOR_DEPTH 24
 
 // Unhides an encoded message from a BMP file
-void unhideBmp(FILE *file) {
+void unhideBmp(FILE *file_ptr) {
     struct ImageInfo imageInfo;
 
-    imageInfo = getBmpImageInfo(file);
+    imageInfo = getBmpImageInfo(file_ptr);
 
     if (imageInfo.depth != BMP_COLOR_DEPTH) {
-        errorAndExit("Must be a 24bit image");
+        errorAndExit("Must be a 24bit image", file_ptr);
     }
 
     #ifdef DEBUG
     printImageInfo(&imageInfo);
     #endif
 
-    decodeImage(file, imageInfo);
-
-    fclose(file);
+    decodeImage(file_ptr, &imageInfo);
+    messageAndExit("\n\nFinished decoding!", file_ptr);
 }

@@ -11,20 +11,20 @@
 #define PPM_COLOR_DEPTH 255
 
 // unhides the message from a PPM file
-void unhidePpm(FILE *file) {
+void unhidePpm(FILE *file_ptr) {
     struct ImageInfo imageInfo;
 
-    imageInfo = getPpmImageInfo(file);
+    imageInfo = getPpmImageInfo(file_ptr);
 
     if (imageInfo.depth != PPM_COLOR_DEPTH) {
-        errorAndExit("Unsupported image depth");
+        errorAndExit("Unsupported image depth", file_ptr);
     }
 
     #ifdef DEBUG
     printImageInfo(&imageInfo);
     #endif
 
-    decodeImage(file, imageInfo);
+    decodeImage(file_ptr, &imageInfo);
 
-    fclose(file);
+    messageAndExit("\n\nFinished decoding!", file_ptr);
 }

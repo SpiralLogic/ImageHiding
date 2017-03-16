@@ -12,22 +12,20 @@
 #define PPM_COLOR_DEPTH 255
 #define PPM_OUTPUT_FILE "output.ppm"
 
-void hideInPpm(FILE *file, char *message) {
-    struct ImageInfo imageInfo = getPpmImageInfo(file);
-
-    if (imageInfo.depth != PPM_COLOR_DEPTH) {
-        errorAndExit("Image depth not supportec");
-    }
-
-    if (!doesMessageFit(imageInfo, message)) {
-        errorAndExit("Message does not fit image");
-    }
+void hideInPpm(FILE *file_ptr, char *message) {
+    struct ImageInfo imageInfo = getPpmImageInfo(file_ptr);
 
     #ifdef DEBUG
     printImageInfo(&imageInfo);
     #endif
 
-    encodeImage(file, imageInfo, PPM_OUTPUT_FILE, message);
+    if (imageInfo.depth != PPM_COLOR_DEPTH) {
+        errorAndExit("Image depth not supported", file_ptr);
+    }
 
-    fclose(file);
+    if (!doesMessageFit(&imageInfo, message)) {
+        errorAndExit("Message does not fit image", file_ptr);
+    }
+
+    encodeImage(file_ptr, &imageInfo, PPM_OUTPUT_FILE, message);
 }

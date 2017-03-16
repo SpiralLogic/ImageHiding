@@ -6,6 +6,6 @@
 #include <stdio.h>
 #include "common.h"
 
-void unhidePpm(FILE *file);
+void unhidePpm(FILE *file_ptr);
 
 #endif //ASS1_PPMUNHIDE_H

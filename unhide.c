@@ -14,30 +14,29 @@ int main(int argc, char *argv[]) {
 
 
     if (argc < 2) {
-        errorAndExit("Not enough arguments passed");
+        errorAndExit("Not enough arguments passed", NULL);
     }
 
     imageFile = argv[1];
 
-    FILE *file = fopen(imageFile, "r");
+    FILE *file_ptr = fopen(imageFile, "r");
 
-    if (file == NULL) {
-        errorAndExit("Cannot open file");
+    if (file_ptr == NULL) {
+        errorAndExit("Cannot open file_ptr", NULL);
     }
 
-    imageType = getImageType(file);
+    imageType = getImageType(file_ptr);
 
     if (imageType == unsupported) {
-        errorAndExit("Image type unsupported");
+        errorAndExit("Image type unsupported", file_ptr);
     }
     if (imageType == ppm) {
-        unhidePpm(file);
-
+        unhidePpm(file_ptr);
     } else if (imageType == bmp) {
-        unhideBmp(file);
+        unhideBmp(file_ptr);
     }
 
-    messageAndExit("\nSuccessfully decoded message!");
+    messageAndExit("\nSuccessfully decoded message!", file_ptr);
 
     return 0;
 }

@@ -9,16 +9,16 @@
 
 // Encodes a message into a 24 bit pixel map
 // Each RGB colour in a pixel will store 1 bit of the message in it's least significant bit
-void encodeImage(FILE *file, struct ImageInfo imageInfo, char *outputFile, char *message) {
+void encodeImage(FILE *file_ptr, struct ImageInfo *imageInfo, char *outputFile, char *message) {
     FILE *outfile = fopen(outputFile, "w+");
 
     if (outfile == NULL) {
-        errorAndExit("Cannot open output file");
+        errorAndExit("Cannot open output file_ptr", file_ptr);
     }
 
-    copyHeader(file, outfile, imageInfo);
+    copyHeader(file_ptr, outfile, imageInfo);
 
-    fseek(file, imageInfo.pixelMapOffset, SEEK_SET);
+    fseek(file_ptr, imageInfo->pixelMapOffset, SEEK_SET);
 
     int messageLength = (int) strlen(message) + 1;
     int messageBit;
@@ -29,11 +29,11 @@ void encodeImage(FILE *file, struct ImageInfo imageInfo, char *outputFile, char 
         for (int j = 0; j < 8; j++) {
             // Stores the next message bit to encode
             messageBit = (message[i] << j & 0x80)/0x80;
-            nextByte = getc(file);
+            nextByte = getc(file_ptr);
             if (nextByte == EOF) {
                 fclose(outfile);
                 remove(outputFile);
-                errorAndExit("Cannot encode into an incomplete image");
+                errorAndExit("Cannot encode into an incomplete image", file_ptr);
             }
 
             // Encodes the message bit into the least significant of the byte read from the original image
@@ -43,7 +43,7 @@ void encodeImage(FILE *file, struct ImageInfo imageInfo, char *outputFile, char 
     }
 
     // Write the remaining image to the output file
-    while ((nextByte = fgetc(file)) != EOF) {
+    while ((nextByte = fgetc(file_ptr)) != EOF) {
         fputc(nextByte, outfile);
     }
 
@@ -51,7 +51,7 @@ void encodeImage(FILE *file, struct ImageInfo imageInfo, char *outputFile, char 
 }
 
 // Determines if the message can fit into the image
-bool doesMessageFit(struct ImageInfo info, char *message) {
+bool doesMessageFit(struct ImageInfo *info, char *message) {
     // The length of the message can't be stored in an int value. this is bad
     // strlen returns a size_t which isn't necessarily the same size and an int
     if ((strlen(message) + 1) > sizeof(int) * 8) {
@@ -62,20 +62,20 @@ bool doesMessageFit(struct ImageInfo info, char *message) {
     int length = (int) strlen(message) + 1;
 
     // it takes 3 pixels to store all 8 bits of 1 character.
-    return (length * 8) < (info.height * info.width * 3);
+    return (length * 8) < (info->height * info->width * 3);
 }
 
 // Copies the header from the input image to the output image.
-void copyHeader(FILE *file, FILE *outfile, struct ImageInfo imageInfo) {
+void copyHeader(FILE *file_ptr, FILE *outfile, struct ImageInfo *imageInfo) {
     int nextByte;
     long charsCopied = 0;
 
-    rewind(file);
+    rewind(file_ptr);
 
-    while ((nextByte = fgetc(file)) != EOF && charsCopied < imageInfo.pixelMapOffset)
+    while ((nextByte = fgetc(file_ptr)) != EOF && charsCopied < imageInfo->pixelMapOffset)
     {
         if (nextByte == EOF) {
-            errorAndExit("Unexpected end of file");
+            errorAndExit("Unexpected end of file_ptr", file_ptr);
         }
 
         fputc(nextByte, outfile);

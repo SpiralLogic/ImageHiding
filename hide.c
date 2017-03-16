@@ -14,30 +14,29 @@ int main(int argc, char *argv[]) {
     enum ImageType imageType;
 
     if (argc < 3) {
-        errorAndExit("Not enough arguments passed");
+        errorAndExit("Not enough arguments passed", NULL);
     }
 
     imageFile = argv[1];
     secretMessage = argv[2];
 
-    FILE *file = fopen(imageFile, "r");
+    FILE *file_ptr = fopen(imageFile, "r");
 
-    if (file == NULL) {
-        errorAndExit("Cannot open file");
+    if (file_ptr == NULL) {
+        errorAndExit("Cannot open file_ptr", NULL);
     }
 
-    imageType = getImageType(file);
+    imageType = getImageType(file_ptr);
 
     if (imageType == unsupported) {
-        errorAndExit("Image type unsupported");
+        errorAndExit("Image type unsupported", file_ptr);
     }
     if (imageType == ppm) {
-        hideInPpm(file, secretMessage);
-        messageAndExit("Successfully hid message in PPM file");
-
+        hideInPpm(file_ptr, secretMessage);
+        messageAndExit("Successfully hid message in PPM!", file_ptr);
     } else if (imageType == bmp) {
-        hideInBmp(file, secretMessage);
-        messageAndExit("Successfully hid message in BMP file");
+        hideInBmp(file_ptr, secretMessage);
+        messageAndExit("Successfully hid message in BMP!", file_ptr);
     }
 
     return 0;

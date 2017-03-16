@@ -8,7 +8,7 @@
 #include <stdio.h>
 #include "common.h"
 
-void unhideBmp(FILE *file);
+void unhideBmp(FILE *file_ptr);
 
 #endif //ASS1_BMPUNHIDE_H
 
