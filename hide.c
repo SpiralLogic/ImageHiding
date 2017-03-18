@@ -6,6 +6,8 @@
 #include "bmpHide.h"
 #include "common.h"
 
+void usage();
+
 // Parses input arguments to make sure they are valid, determines the input file and then uses the
 // correct encode function to encode the message into the image file.
 int main(int argc, char *argv[]) {
@@ -13,8 +15,9 @@ int main(int argc, char *argv[]) {
     char *imageFile;
     enum ImageType imageType;
 
-    if (argc < 3) {
-        errorAndExit("Not enough arguments passed", NULL);
+    if (argc != 3) {
+        usage();
+        errorAndExit("Incorrect number of parameters passed", NULL);
     }
 
     imageFile = argv[1];
@@ -23,7 +26,7 @@ int main(int argc, char *argv[]) {
     FILE *file_ptr = fopen(imageFile, "r");
 
     if (file_ptr == NULL) {
-        errorAndExit("Cannot open file_ptr", NULL);
+        errorAndExit("Cannot open file", NULL);
     }
 
     imageType = getImageType(file_ptr);
@@ -40,4 +43,9 @@ int main(int argc, char *argv[]) {
     }
 
     return 0;
+}
+
+void usage() {
+    printf("\nUsage\n");
+    printf("./hide filename \"message\"\n");
 }

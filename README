@@ -1,8 +1,70 @@
-##########################################
-FIT3042 ASSIGNMENT 1
+#####################################################################
 
-SOLOMON JENNINGS
+                          	  3042 Assignment 1
+                          	      Hide/Unhide
+                          	  Image Steganography
+                             
+                             by Solomon Jennings
+                           		  26356015
+#####################################################################
 
-26356015
-##########################################
 
+INTRODUCTION:
+#############
+
+This following set of tools written in C allows for the hiding of
+a message with images.
+
+Currently supported images are:
+Plain Binary PPM
+24 bit BMPs
+
+COMPLILING:
+############
+
+GCC is used to compile and compliation should be support up until C99
+The program can be complied in the following ways:
+
+make clean			  	- cleans any previous compliation and removes any output files
+
+make all  				- makes both hide and unhide
+make hide 				- makes hide only
+make unhide 			- makes unhide only
+
+make alldebug 			- makes both hide and unhide with debug output
+make hidedebug  		- makes hide with debug output
+make unhidedebug 		- makes unhide with debug output
+
+HIDING:
+###########
+To hide a message within a image:
+./hide filename "<message>"
+
+
+i.e. ./hide example.ppm "The message to hide"
+
+The message must be enclosed in inverted commas. To include an inverted comma in the message a \ must be placed before the inverted comma.
+
+Each image will be output with it's correct extension preceeded by output.
+
+PPM: output.ppm
+BMP: output.bmp
+
+UNHIDING:
+###########
+To unhide a message from an image:
+./unhide filename
+
+i.e. ./unhide output.ppm
+
+If the message does not contain a message then the output message may be garbled or not exist at all.
+
+
+SUPPORTED FUNCTIONALITY:
+########################
+Both hiding and unhiding a message within both a 24Bit (255 depth) Plain PPM image and 24 Bit BMP image. A BMP with an alpha channel or compression is not supported.
+
+Any non malformed header for both image types is supported. This includes any number of
+comments within the PPM format.
+
+Error detection is supported and should detect any incomplete image pixel map, incorrect headers, malformed headers and message lengths which are too long.

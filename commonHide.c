@@ -13,7 +13,7 @@ void encodeImage(FILE *file_ptr, struct ImageInfo *imageInfo, char *outputFile, 
     FILE *outfile = fopen(outputFile, "w+");
 
     if (outfile == NULL) {
-        errorAndExit("Cannot open output file_ptr", file_ptr);
+        errorAndExit("Cannot open output file", file_ptr);
     }
 
     copyHeader(file_ptr, outfile, imageInfo);
@@ -48,6 +48,7 @@ void encodeImage(FILE *file_ptr, struct ImageInfo *imageInfo, char *outputFile, 
     }
 
     fclose(outfile);
+    printf("Output image: %s\n", outputFile);
 }
 
 // Determines if the message can fit into the image
