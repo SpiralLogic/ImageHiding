@@ -30,7 +30,7 @@ void errorAndExit(char *error, FILE *file_ptr) {
     if (file_ptr != NULL) {
         fclose(file_ptr);
     }
-    fprintf(stderr, "Error: %s\n", error);
+    fprintf(stderr, "\nError: %s\n", error);
     exit(1);
 }
 
@@ -40,7 +40,7 @@ void messageAndExit(char *message, FILE *file_ptr) {
     if (file_ptr != NULL) {
         fclose(file_ptr);
     }
-    fprintf(stdout, "%s\n", message);
+    fprintf(stdout, "\n%s\n", message);
     exit(0);
 }
 

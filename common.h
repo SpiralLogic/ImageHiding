@@ -5,12 +5,15 @@
 #define ASS1_COMMON_H
 
 #include <stdio.h>
+#include <stdbool.h>
 
 struct ImageInfo {
     int width;
     int height;
     int depth;
     long pixelMapOffset;
+    bool successRead;
+    char* errorMesssage;
 };
 
 enum ImageType {

@@ -4,8 +4,10 @@
 // Contains the common functionality required to hide an image
 
 #include <memory.h>
+#include <stdlib.h>
 #include "commonHide.h"
-#include "common.h"
+
+static char *secretMessage;
 
 // Encodes a message into a 24 bit pixel map
 // Each RGB colour in a pixel will store 1 bit of the message in it's least significant bit
@@ -13,6 +15,7 @@ void encodeImage(FILE *file_ptr, struct ImageInfo *imageInfo, char *outputFile, 
     FILE *outfile = fopen(outputFile, "w+");
 
     if (outfile == NULL) {
+        freeSecretMessage();
         errorAndExit("Cannot open output file", file_ptr);
     }
 
@@ -33,6 +36,7 @@ void encodeImage(FILE *file_ptr, struct ImageInfo *imageInfo, char *outputFile, 
             if (nextByte == EOF) {
                 fclose(outfile);
                 remove(outputFile);
+                freeSecretMessage();
                 errorAndExit("Cannot encode into an incomplete image", file_ptr);
             }
 
@@ -76,6 +80,7 @@ void copyHeader(FILE *file_ptr, FILE *outfile, struct ImageInfo *imageInfo) {
     while ((nextByte = fgetc(file_ptr)) != EOF && charsCopied < imageInfo->pixelMapOffset)
     {
         if (nextByte == EOF) {
+            freeSecretMessage();
             errorAndExit("Unexpected end of file_ptr", file_ptr);
         }
 
@@ -84,3 +89,20 @@ void copyHeader(FILE *file_ptr, FILE *outfile, struct ImageInfo *imageInfo) {
     }
 
 }
+
+void setSecretMessage(char *message) {
+    secretMessage = message;
+}
+
+char *getSecretMessage(){
+    return secretMessage;
+}
+
+void freeSecretMessage() {
+    if (secretMessage != NULL) {
+        free(secretMessage);
+        secretMessage = NULL;
+    }
+}
+
+

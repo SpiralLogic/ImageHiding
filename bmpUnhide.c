@@ -15,6 +15,9 @@ void unhideBmp(FILE *file_ptr) {
 
     imageInfo = getBmpImageInfo(file_ptr);
 
+    if (imageInfo.successRead == false) {
+        errorAndExit(imageInfo.errorMesssage, file_ptr);
+    }
     if (imageInfo.depth != BMP_COLOR_DEPTH) {
         errorAndExit("Must be a 24bit image", file_ptr);
     }
@@ -24,5 +27,6 @@ void unhideBmp(FILE *file_ptr) {
     #endif
 
     decodeImage(file_ptr, &imageInfo);
+
     messageAndExit("\n\nFinished decoding!", file_ptr);
 }

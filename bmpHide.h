@@ -8,6 +8,6 @@
 #include <stdbool.h>
 #include "common.h"
 
-void hideInBmp(FILE *file_ptr, char *message);
+void hideInBmp(FILE *file_ptr, char *outputFile, char *message);
 
 #endif //ASS1_BMPHIDE_H

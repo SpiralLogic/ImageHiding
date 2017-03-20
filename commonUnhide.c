@@ -14,6 +14,7 @@ void decodeImage(FILE *file_ptr, struct ImageInfo *imageInfo) {
 
     fseek(file_ptr, imageInfo->pixelMapOffset, SEEK_SET);
     printf("Decoded message:\n");
+    printf("#########################################\n");
 
     while ((nextByte = fgetc(file_ptr)) != EOF)
     {
@@ -22,6 +23,7 @@ void decodeImage(FILE *file_ptr, struct ImageInfo *imageInfo) {
         messageChar |= nextByte & 0x01;
         if (currentBit == 7) {
             if (messageChar == '\0') {
+                printf("\n#########################################");
                 return;
             }
             printf("%c", messageChar);
@@ -31,6 +33,6 @@ void decodeImage(FILE *file_ptr, struct ImageInfo *imageInfo) {
             currentBit++;
         }
     }
-
+    printf("\n#########################################");
     errorAndExit("\nOh No! The end of the message was next reached!", file_ptr);
 }

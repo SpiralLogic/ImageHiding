@@ -9,7 +9,7 @@
 
 // Reads the information about a PPM image from the header
 struct ImageInfo getPpmImageInfo(FILE *file_ptr) {
-    struct ImageInfo imageInfo = {.height = 0, .width =0, .depth = 0, .pixelMapOffset = 0};
+    struct ImageInfo imageInfo = {.height = 0, .width =0, .depth = 0, .pixelMapOffset = 0, .successRead = false };
     bool headerComplete = false;
     int nextChar;
     int currentDimension = 0;
@@ -23,12 +23,17 @@ struct ImageInfo getPpmImageInfo(FILE *file_ptr) {
         nextChar = getc(file_ptr);
 
         if (nextChar == EOF) {
-            errorAndExit("Could not read a complete header", file_ptr);
+            imageInfo.errorMesssage = "Could not read a complete header";
+            return imageInfo;
         }
 
         // Pesky comments can be skipped
         if (nextChar == '#') {
-            moveFileToNextLine(file_ptr);
+            if (!moveFileToNextLine(file_ptr)) {
+                imageInfo.errorMesssage = "End of file_ptr reached before next line";
+                return imageInfo;
+            }
+
             continue;
         }
 
@@ -41,11 +46,11 @@ struct ImageInfo getPpmImageInfo(FILE *file_ptr) {
         ungetc(nextChar, file_ptr);
         dimensionValue = scanDimension(file_ptr);
 
-        // No dimension value found ! remove the character again keep searching
+        // No dimension value found !
         if (dimensionValue < 0) {
             // we didn't scan a dimension that means this character is garbage.
-            errorAndExit("Malformed header", file_ptr);
-            continue;
+            imageInfo.errorMesssage = "Malformed header";
+            return imageInfo;
         }
 
         switch (currentDimension) {
@@ -63,13 +68,15 @@ struct ImageInfo getPpmImageInfo(FILE *file_ptr) {
                 headerComplete = true;
                 break;
             default:
-                errorAndExit("Bad header detected", file_ptr);
+                imageInfo.errorMesssage = "Bad header detected";
+                return imageInfo;
         }
     }
 
     // Store the start of the image pixel map
     imageInfo.pixelMapOffset = ftell(file_ptr) + 1;
 
+    imageInfo.successRead = true;
     return imageInfo;
 }
 
@@ -84,13 +91,13 @@ int scanDimension(FILE *file_ptr) {
 }
 
 // Moves to the next line of the file
-void moveFileToNextLine(FILE *file_ptr) {
+bool moveFileToNextLine(FILE *file_ptr) {
     int nextChar;
     while ((nextChar = getc(file_ptr)) != EOF) {
         if (nextChar == '\n') {
-            return;
+            return true;
         }
     };
 
-    errorAndExit("End of file_ptr reached before next line", file_ptr);
+    return false;
 }

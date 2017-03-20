@@ -33,13 +33,13 @@ int main(int argc, char *argv[]) {
     if (imageType == unsupported) {
         errorAndExit("Image type unsupported", file_ptr);
     }
+
     if (imageType == ppm) {
         unhidePpm(file_ptr);
     } else if (imageType == bmp) {
         unhideBmp(file_ptr);
     }
 
-    messageAndExit("\nSuccessfully decoded message!", file_ptr);
 
     return 0;
 }

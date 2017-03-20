@@ -19,10 +19,10 @@ Currently supported images are:
 Plain Binary PPM
 24 bit BMPs
 
-COMPLILING:
+COMPILING:
 ############
 
-GCC is used to compile and compliation should be support up until C99
+GCC is used to compile and compilation should be support up until C99
 The program can be complied in the following ways:
 
 make clean			  	- cleans any previous compliation and removes any output files
@@ -38,17 +38,13 @@ make unhidedebug 		- makes unhide with debug output
 HIDING:
 ###########
 To hide a message within a image:
-./hide filename "<message>"
+./hide imagename outputfilename
 
 
-i.e. ./hide example.ppm "The message to hide"
+i.e. ./hide example.ppm output.ppm
 
 The message must be enclosed in inverted commas. To include an inverted comma in the message a \ must be placed before the inverted comma.
 
-Each image will be output with it's correct extension preceeded by output.
-
-PPM: output.ppm
-BMP: output.bmp
 
 UNHIDING:
 ###########
@@ -66,5 +62,7 @@ Both hiding and unhiding a message within both a 24Bit (255 depth) Plain PPM ima
 
 Any non malformed header for both image types is supported. This includes any number of
 comments within the PPM format.
+
+Implementation is file extension agnostic. Image types are dependent on the magic number of the file header.
 
 Error detection is supported and should detect any incomplete image pixel map, incorrect headers, malformed headers and message lengths which are too long.

@@ -7,7 +7,7 @@
 #include <stdbool.h>
 #include "common.h"
 
-void hideInPpm(FILE *file_ptr, char *message);
+void hideInPpm(FILE *file_ptr, char *outputFile, char *message);
 
 #endif //ASS1_PPMHIDE_H
 

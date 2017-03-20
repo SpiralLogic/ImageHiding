@@ -15,6 +15,9 @@ void unhidePpm(FILE *file_ptr) {
     struct ImageInfo imageInfo;
 
     imageInfo = getPpmImageInfo(file_ptr);
+    if (imageInfo.successRead == false) {
+        errorAndExit(imageInfo.errorMesssage, file_ptr);
+    }
 
     if (imageInfo.depth != PPM_COLOR_DEPTH) {
         errorAndExit("Unsupported image depth", file_ptr);
@@ -26,5 +29,5 @@ void unhidePpm(FILE *file_ptr) {
 
     decodeImage(file_ptr, &imageInfo);
 
-    messageAndExit("\n\nFinished decoding!", file_ptr);
+    messageAndExit("\nFinished decoding!", file_ptr);
 }

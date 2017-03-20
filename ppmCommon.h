@@ -4,7 +4,7 @@
 #ifndef ASS1_PPMCOMMON_H
 #define ASS1_PPMCOMMON_H
 
-void moveFileToNextLine(FILE *file_ptr);
+bool moveFileToNextLine(FILE *file_ptr);
 int scanDimension(FILE *file_ptr);
 struct ImageInfo getPpmImageInfo(FILE *file_ptr);
 

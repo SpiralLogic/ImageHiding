@@ -5,14 +5,21 @@
 #include "ppmHide.h"
 #include "bmpHide.h"
 #include "common.h"
+#include "commonhide.h"
+
+#include <stdlib.h>
+#include <string.h>
+
+#define BUFF_SIZE 512
 
 void usage();
+char* readFromInput();
 
 // Parses input arguments to make sure they are valid, determines the input file and then uses the
 // correct encode function to encode the message into the image file.
 int main(int argc, char *argv[]) {
-    char *secretMessage;
     char *imageFile;
+    char *outputFile;
     enum ImageType imageType;
 
     if (argc != 3) {
@@ -21,7 +28,7 @@ int main(int argc, char *argv[]) {
     }
 
     imageFile = argv[1];
-    secretMessage = argv[2];
+    outputFile = argv[2];
 
     FILE *file_ptr = fopen(imageFile, "r");
 
@@ -34,11 +41,16 @@ int main(int argc, char *argv[]) {
     if (imageType == unsupported) {
         errorAndExit("Image type unsupported", file_ptr);
     }
+
+    setSecretMessage(readFromInput());
+
     if (imageType == ppm) {
-        hideInPpm(file_ptr, secretMessage);
+        hideInPpm(file_ptr, outputFile, getSecretMessage());
+        freeSecretMessage();
         messageAndExit("Successfully hid message in PPM!", file_ptr);
     } else if (imageType == bmp) {
-        hideInBmp(file_ptr, secretMessage);
+        hideInBmp(file_ptr, outputFile, getSecretMessage());
+        freeSecretMessage();
         messageAndExit("Successfully hid message in BMP!", file_ptr);
     }
 
@@ -47,5 +59,45 @@ int main(int argc, char *argv[]) {
 
 void usage() {
     printf("\nUsage\n");
-    printf("./hide filename \"message\"\n");
+    printf("./hide inputimage outputfile");
+}
+
+char* readFromInput() {
+    char buffer[BUFF_SIZE];
+    size_t contentSize = 1; // includes NULL
+
+    /* Preallocate space.  We could just allocate one char here,
+    but that wouldn't be efficient. */
+    char *content = malloc(sizeof(char) * BUFF_SIZE);
+
+    if(content == NULL)
+    {
+        errorAndExit("Failed to allocate content", NULL);
+    }
+
+    content[0] = '\0'; // make null-terminated
+
+    printf("Input secret message press ctrl+D 3 times when finished\n");
+
+    while(fgets(buffer, BUFF_SIZE, stdin))
+    {
+        char *old = content;
+        contentSize += strlen(buffer);
+        content = realloc(content, contentSize);
+
+        if(content == NULL)
+        {
+            free(old);
+            errorAndExit("Failed to reallocate content", NULL);
+        }
+        strcat(content, buffer);
+    }
+
+    if(ferror(stdin))
+    {
+        free(content);
+        errorAndExit("Error reading from stdin.", NULL);
+    }
+
+    return content;
 }
