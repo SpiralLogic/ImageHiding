@@ -1,0 +1,6 @@
+#/bin/bash
+cd "${0%/*}"
+mkdir outputimages
+printf "test" | valgrind --leak-check=yes ./hide images/3pixels.ppm outputimages/output.ppm
+printf t | valgrind --leak-check=yes ./hide images/3pixels.ppm outputimages/output.ppm
+valgrind --leak-check=yes ./unhide outputimages/output.ppm

@@ -90,14 +90,18 @@ void copyHeader(FILE *file_ptr, FILE *outfile, struct ImageInfo *imageInfo) {
 
 }
 
+
+// sets the current secret message
 void setSecretMessage(char *message) {
     secretMessage = message;
 }
 
+// Gets the current secret message
 char *getSecretMessage(){
     return secretMessage;
 }
 
+// frees the memory held by the secret message
 void freeSecretMessage() {
     if (secretMessage != NULL) {
         free(secretMessage);

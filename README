@@ -55,6 +55,8 @@ i.e. ./unhide output.ppm
 
 If the message does not contain a message then the output message may be garbled or not exist at all.
 
+The output of the message will be start and end with a line of '########################'
+
 
 SUPPORTED FUNCTIONALITY:
 ########################

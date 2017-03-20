@@ -20,4 +20,5 @@ unhidedebug: unhide.c ppmUnhide.c common.c ppmCommon.c
 	$(CC) $(SWITCHES) -DDEBUG -o unhide $(UNHIDEFILES)
 
 clean:
-	rm -f hide unhide outfile.* output.*
+	rm -f hide unhide
+	rm -rf outputimages
