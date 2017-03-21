@@ -9,11 +9,10 @@
 void usage();
 
 // Parses input arguments to make sure they are valid, determines the input file and then uses the
-// correct decode function to decode the message from xthe image file.
+// correct decode function to decode the message from the image file.
 int main(int argc, char *argv[]) {
     char *imageFile;
     enum ImageType imageType;
-
 
     if (argc != 2) {
         usage();
@@ -39,11 +38,11 @@ int main(int argc, char *argv[]) {
     } else if (imageType == bmp) {
         unhideBmp(file_ptr);
     }
-
-
+    
     return 0;
 }
 
+// displays the use for this command
 void usage() {
     printf("\nUsage\n");
     printf("./unhide filename\n");

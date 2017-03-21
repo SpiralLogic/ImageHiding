@@ -20,9 +20,9 @@ void hideInBmp(FILE *file_ptr, char *outputFile, char *message){
         errorAndExit(imageInfo.errorMesssage, file_ptr);
     }
 
-    #ifdef DEBUG
+#ifdef DEBUG
     printImageInfo(&imageInfo);
-    #endif
+#endif
 
     if (imageInfo.depth != BMP_COLOR_DEPTH) {
         freeSecretMessage();

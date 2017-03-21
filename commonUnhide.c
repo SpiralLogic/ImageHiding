@@ -6,7 +6,7 @@
 #include <stdlib.h>
 #include "commonUnhide.h"
 
-// decodes a 24 bit image from an inout file. A null terminator marks the end of the encoded message
+// decodes a 24 bit image from an input file. A null terminator \0 marks the end of the encoded message
 void decodeImage(FILE *file_ptr, struct ImageInfo *imageInfo) {
     int messageChar = 0;
     int nextByte;
@@ -34,5 +34,5 @@ void decodeImage(FILE *file_ptr, struct ImageInfo *imageInfo) {
         }
     }
     printf("\n#########################################");
-    errorAndExit("\nOh No! The end of the message was next reached!", file_ptr);
+    errorAndExit("\nOh No! The end of the message was never reached!", file_ptr);
 }

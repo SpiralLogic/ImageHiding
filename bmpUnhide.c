@@ -3,7 +3,6 @@
 //
 // Contains the functions for decoding a message in a BMP
 #include "bmpUnhide.h"
-#include "common.h"
 #include "bmpCommon.h"
 #include "commonUnhide.h"
 
@@ -22,9 +21,9 @@ void unhideBmp(FILE *file_ptr) {
         errorAndExit("Must be a 24bit image", file_ptr);
     }
 
-    #ifdef DEBUG
+#ifdef DEBUG
     printImageInfo(&imageInfo);
-    #endif
+#endif
 
     decodeImage(file_ptr, &imageInfo);
 

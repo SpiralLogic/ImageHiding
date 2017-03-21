@@ -5,7 +5,6 @@
 #define ASS1_BMPHIDE_H
 
 #include <stdio.h>
-#include <stdbool.h>
 #include "common.h"
 
 void hideInBmp(FILE *file_ptr, char *outputFile, char *message);

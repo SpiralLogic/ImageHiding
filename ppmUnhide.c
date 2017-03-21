@@ -23,9 +23,9 @@ void unhidePpm(FILE *file_ptr) {
         errorAndExit("Unsupported image depth", file_ptr);
     }
 
-    #ifdef DEBUG
+#ifdef DEBUG
     printImageInfo(&imageInfo);
-    #endif
+#endif
 
     decodeImage(file_ptr, &imageInfo);
 

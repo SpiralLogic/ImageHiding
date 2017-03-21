@@ -10,6 +10,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+// Size of the read in input buffer
 #define BUFF_SIZE 512
 
 void usage();
@@ -57,11 +58,13 @@ int main(int argc, char *argv[]) {
     return 0;
 }
 
+// displays the use for this command
 void usage() {
     printf("\nUsage\n");
     printf("./hide inputimage outputfile\n");
 }
 
+// Reads a set of characters from the standard in until an EOF/Ctrl+D is reached
 char* readFromInput() {
     char buffer[BUFF_SIZE];
     size_t inputSize = 1; // includes NULL
@@ -73,16 +76,21 @@ char* readFromInput() {
     if(input == NULL)
     {
         errorAndExit("Failed to allocate content", NULL);
-    } else {
+    } else
+    {
         input[0] = '\0'; // make null-terminated
     }
 
+    // Dunno why sometimes I need to use 3
     printf("Input secret message press ctrl+D 1-3 times when finished\n");
 
+    // Keep reading a buffer sized amount of characters until EOF is reached
     while(fgets(buffer, BUFF_SIZE, stdin))
     {
         char *old = input;
         inputSize += strlen(buffer);
+
+        // We need more memory!
         input = realloc(input, inputSize);
 
         if(input == NULL)
@@ -93,11 +101,13 @@ char* readFromInput() {
         strcat(input, buffer);
     }
 
+    // Oh no!
     if(ferror(stdin))
     {
         free(input);
         errorAndExit("Error reading from stdin.", NULL);
     }
 
+    //returns the pointer to the read in string
     return input;
 }

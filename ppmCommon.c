@@ -4,6 +4,7 @@
 // Contains the common functionality required for PPM file
 #include <stdio.h>
 #include <stdbool.h>
+
 #include "common.h"
 #include "ppmCommon.h"
 
@@ -30,7 +31,7 @@ struct ImageInfo getPpmImageInfo(FILE *file_ptr) {
         // Pesky comments can be skipped
         if (nextChar == '#') {
             if (!moveFileToNextLine(file_ptr)) {
-                imageInfo.errorMesssage = "End of file_ptr reached before next line";
+                imageInfo.errorMesssage = "End of file reached before next line";
                 return imageInfo;
             }
 

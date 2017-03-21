@@ -5,6 +5,7 @@
 #define ASS1_PPMHIDE_H
 #include <stdio.h>
 #include <stdbool.h>
+
 #include "common.h"
 
 void hideInPpm(FILE *file_ptr, char *outputFile, char *message);

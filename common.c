@@ -25,7 +25,7 @@ enum ImageType getImageType(FILE *file_ptr) {
 }
 
 // Prints an error message and exits. Also puts the error message in stderr
-// Also closes a file if it is open
+// closes a file pointer if it is open
 void errorAndExit(char *error, FILE *file_ptr) {
     if (file_ptr != NULL) {
         fclose(file_ptr);
@@ -35,7 +35,7 @@ void errorAndExit(char *error, FILE *file_ptr) {
 }
 
 // Prints a message and exits
-// Also closes a file if it is open
+// closes a file pointer if it is open
 void messageAndExit(char *message, FILE *file_ptr) {
     if (file_ptr != NULL) {
         fclose(file_ptr);
