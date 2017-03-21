@@ -1,0 +1,6 @@
+3pixels32bit.bmp
+6pixels.bmp
+bad.bmp
+LAND2.bmp
+onza.bmp
+output.bmp

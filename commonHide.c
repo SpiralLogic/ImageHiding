@@ -12,6 +12,8 @@ static char *secretMessage;
 // Encodes a message into a 24 bit pixel map
 // Each RGB colour in a pixel will store 1 bit of the message in it's least significant bit
 void encodeImage(FILE *file_ptr, struct ImageInfo *imageInfo, char *outputFile, char *message) {
+    remove(outputFile);
+
     FILE *outfile = fopen(outputFile, "w+");
 
     if (outfile == NULL) {

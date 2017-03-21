@@ -59,45 +59,45 @@ int main(int argc, char *argv[]) {
 
 void usage() {
     printf("\nUsage\n");
-    printf("./hide inputimage outputfile");
+    printf("./hide inputimage outputfile\n");
 }
 
 char* readFromInput() {
     char buffer[BUFF_SIZE];
-    size_t contentSize = 1; // includes NULL
+    size_t inputSize = 1; // includes NULL
 
     /* Preallocate space.  We could just allocate one char here,
     but that wouldn't be efficient. */
-    char *content = malloc(sizeof(char) * BUFF_SIZE);
+    char *input = malloc(sizeof(char) * BUFF_SIZE);
 
-    if(content == NULL)
+    if(input == NULL)
     {
         errorAndExit("Failed to allocate content", NULL);
+    } else {
+        input[0] = '\0'; // make null-terminated
     }
 
-    content[0] = '\0'; // make null-terminated
-
-    printf("Input secret message press ctrl+D 3 times when finished\n");
+    printf("Input secret message press ctrl+D 1-3 times when finished\n");
 
     while(fgets(buffer, BUFF_SIZE, stdin))
     {
-        char *old = content;
-        contentSize += strlen(buffer);
-        content = realloc(content, contentSize);
+        char *old = input;
+        inputSize += strlen(buffer);
+        input = realloc(input, inputSize);
 
-        if(content == NULL)
+        if(input == NULL)
         {
             free(old);
             errorAndExit("Failed to reallocate content", NULL);
         }
-        strcat(content, buffer);
+        strcat(input, buffer);
     }
 
     if(ferror(stdin))
     {
-        free(content);
+        free(input);
         errorAndExit("Error reading from stdin.", NULL);
     }
 
-    return content;
+    return input;
 }
