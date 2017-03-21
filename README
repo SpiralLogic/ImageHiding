@@ -22,7 +22,7 @@ Plain Binary PPM
 COMPILING:
 ############
 
-GCC is used to compile and compilation should be support up until C99
+GCC is used to compile and compilation should be supported up until C99
 The program can be complied in the following ways:
 
 make clean			  	- cleans any previous compliation and removes any output files
@@ -40,31 +40,46 @@ HIDING:
 To hide a message within a image:
 ./hide imagename outputfilename
 
+Example:
+./hide example.ppm output.ppm
 
-i.e. ./hide example.ppm output.ppm
-
-The message must be enclosed in inverted commas. To include an inverted comma in the message a \ must be placed before the inverted comma.
-
+The end of the message is marked up a EOF character. This can be enter into the terminal by presseing ctrl+D
+sometimes it takes a couple of ctrl+ds to work. Dunno why
 
 UNHIDING:
 ###########
 To unhide a message from an image:
 ./unhide filename
 
-i.e. ./unhide output.ppm
+Example:
+./unhide output.ppm
 
-If the message does not contain a message then the output message may be garbled or not exist at all.
+If the image does not contain a message then the output message may be garbled or not exist at all.
 
 The output of the message will be start and end with a line of '########################'
 
 
 SUPPORTED FUNCTIONALITY:
 ########################
-Both hiding and unhiding a message within both a 24Bit (255 depth) Plain PPM image and 24 Bit BMP image. A BMP with an alpha channel or compression is not supported.
+Both hiding and unhiding a message within both a 24Bit (255 depth) standard PPM image and 24 Bit BMP images.
+A BMP with an alpha channel or compression is not supported.
 
 Any non malformed header for both image types is supported. This includes any number of
 comments within the PPM format.
 
 Implementation is file extension agnostic. Image types are dependent on the magic number of the file header.
 
-Error detection is supported and should detect any incomplete image pixel map, incorrect headers, malformed headers and message lengths which are too long.
+Error detection is supported and should detect any incomplete image pixel map, incorrect headers, malformed headers and
+message lengths which are too long.
+
+Piping is supported. Example
+printf "Test" | ./hide input.ppm output.ppm
+
+TEST SUITE:
+########################
+A test suite of images is provided. This runs a series of tests through both unhide and hide.
+Results are stored in log.txt and included leak detection form valgrind
+
+Unfortunately results need to be via manual inspection.
+This can be done with
+less log.txt

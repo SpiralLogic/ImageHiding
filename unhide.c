@@ -38,7 +38,7 @@ int main(int argc, char *argv[]) {
     } else if (imageType == bmp) {
         unhideBmp(file_ptr);
     }
-    
+
     return 0;
 }
 
