@@ -37,7 +37,7 @@ void encodeImage(FILE *file_ptr, struct ImageInfo *imageInfo, char *outputFile, 
 
             // Stores the next message bit to encode
             messageBit = (message[i] << j & 0x80)/0x80;
-            nextByte = getc(file_ptr);
+            nextByte = fgetc(file_ptr);
 
             if (nextByte == EOF) {
                 //Where is the rest of the image!
@@ -49,7 +49,12 @@ void encodeImage(FILE *file_ptr, struct ImageInfo *imageInfo, char *outputFile, 
 
             // Encodes the message bit into the least significant of the byte read from the original image
             nextByte = (nextByte & 0xFE) | messageBit;
-            putc(nextByte, outfile_ptr);
+            if (fputc(nextByte, outfile_ptr) == EOF) {
+                fclose(outfile_ptr);
+                remove(outputFile);
+                freeSecretMessage();
+                errorAndExit("Problem writing to output file", file_ptr);
+            }
         }
     }
 

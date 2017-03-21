@@ -5,7 +5,7 @@
 #include "ppmHide.h"
 #include "bmpHide.h"
 #include "common.h"
-#include "commonhide.h"
+#include "commonHide.h"
 
 #include <stdlib.h>
 #include <string.h>

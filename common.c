@@ -10,8 +10,8 @@ enum ImageType getImageType(FILE *file_ptr) {
     int firstChar, secondChar;
     rewind(file_ptr);
 
-    firstChar = getc(file_ptr);
-    secondChar = getc(file_ptr);
+    firstChar = fgetc(file_ptr);
+    secondChar = fgetc(file_ptr);
 
     if (firstChar == 'P' && secondChar == '6') {
         return ppm;

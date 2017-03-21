@@ -21,7 +21,7 @@ struct ImageInfo getPpmImageInfo(FILE *file_ptr) {
 
     while (!headerComplete) {
         // Get the next character
-        nextChar = getc(file_ptr);
+        nextChar = fgetc(file_ptr);
 
         if (nextChar == EOF) {
             imageInfo.errorMesssage = "Could not read a complete header";
@@ -94,7 +94,7 @@ int scanDimension(FILE *file_ptr) {
 // Moves to the next line of the file
 bool moveFileToNextLine(FILE *file_ptr) {
     int nextChar;
-    while ((nextChar = getc(file_ptr)) != EOF) {
+    while ((nextChar = fgetc(file_ptr)) != EOF) {
         if (nextChar == '\n') {
             return true;
         }

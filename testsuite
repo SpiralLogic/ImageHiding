@@ -11,29 +11,32 @@ $VALGRIND ./unhide >> log.txt 2>&1
 $VALGRIND ./unhide images/6pixels.ppm outputimages/test1.ppm toomany >> log.txt 2>&1
 
 
-printf "test" | $VALGRIND ./hide images/6pixels.ppm outputimages/test1.ppm >> log.txt 2>&1
-$VALGRIND ./unhide outputimages/test1.ppm  >> log.txt 2>&1
+printf "S" | $VALGRIND ./hide images/6pixelswhite.ppm outputimages/6pixelswhite.ppm >> log.txt 2>&1
+$VALGRIND ./unhide outputimages/6pixelswhite.ppm  >> log.txt 2>&1
 
-printf t | $VALGRIND ./hide images/6pixels.ppm outputimages/test2.ppm  >> log.txt 2>&1
-$VALGRIND ./unhide outputimages/test2.ppm  >> log.txt 2>&1
+printf "test" | $VALGRIND ./hide images/6pixels.ppm outputimages/6pixels.ppm >> log.txt 2>&1
+$VALGRIND ./unhide outputimages/6pixels.ppm  >> log.txt 2>&1
 
-printf "test" | $VALGRIND ./hide images/3042.pbm outputimages/test3.ppm >> log.txt 2>&1
-$VALGRIND ./unhide outputimages/test3.ppm  >> log.txt 2>&1
+printf t | $VALGRIND ./hide images/6pixels.ppm outputimages/6pixels.ppm  >> log.txt 2>&1
+$VALGRIND ./unhide outputimages/6pixels.ppm  >> log.txt 2>&1
 
-printf "t" | $VALGRIND ./hide images/6pixels.ppm outputimages/test4.ppm >> log.txt 2>&1
-$VALGRIND ./unhide outputimages/test4.ppm  >> log.txt 2>&1
+printf "test" | $VALGRIND ./hide images/3042.pbm outputimages/3042.ppm >> log.txt 2>&1
+$VALGRIND ./unhide outputimages/3042.ppm  >> log.txt 2>&1
 
-printf "H" | $VALGRIND ./hide images/6pixelsMessyHeader.ppm outputimages/test5.ppm >> log.txt 2>&1
-$VALGRIND ./unhide outputimages/test5.ppm  >> log.txt 2>&1
+printf "t" | $VALGRIND ./hide images/6pixels.ppm outputimages/6pixels.ppm >> log.txt 2>&1
+$VALGRIND ./unhide outputimages/6pixels.ppm  >> log.txt 2>&1
 
-printf "\n" | $VALGRIND ./hide images/6pixelsOneLineHeader.ppm outputimages/test6.ppm >> log.txt 2>&1
-$VALGRIND ./unhide outputimages/test6.ppm  >> log.txt 2>&1
+printf "H" | $VALGRIND ./hide images/6pixelsMessyHeader.ppm outputimages/6pixelsMessyHeader.ppm >> log.txt 2>&1
+$VALGRIND ./unhide outputimages/6pixelsMessyHeader.ppm  >> log.txt 2>&1
 
-printf "something\n a little \n longer" | $VALGRIND ./hide images/cross.pbm outputimages/test7.ppm >> log.txt 2>&1
-$VALGRIND ./unhide outputimages/test7.ppm  >> log.txt 2>&1
+printf "\n" | $VALGRIND ./hide images/6pixelsOneLineHeader.ppm outputimages/6pixelsOneLineHeader.ppm >> log.txt 2>&1
+$VALGRIND ./unhide outputimages/6pixelsOneLineHeader.ppm  >> log.txt 2>&1
 
-printf "wawawa woot woot" | $VALGRIND ./hide images/dot2.pbm outputimages/test8.ppm >> log.txt 2>&1
-$VALGRIND ./unhide outputimages/test8.ppm  >> log.txt 2>&1
+printf "something\n a little \n longer" | $VALGRIND ./hide images/cross.pbm outputimages/cross.ppm >> log.txt 2>&1
+$VALGRIND ./unhide outputimages/cross.ppm  >> log.txt 2>&1
+
+printf "wawawa woot woot" | $VALGRIND ./hide images/dot2.pbm outputimages/dot2.ppm >> log.txt 2>&1
+$VALGRIND ./unhide outputimages/dot2.ppm  >> log.txt 2>&1
 
 printf "w" | $VALGRIND ./hide images/incompleteimage.ppm outputimages/output.ppm >> log.txt 2>&1
 $VALGRIND ./unhide outputimages/output.ppm  >> log.txt 2>&1
