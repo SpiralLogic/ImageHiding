@@ -1,15 +1,16 @@
 //
 // Created by Sol Jennings on 13/3/17.
 //
+
 // Main executable for hiding a message in an image file
+#include <stdlib.h>
+#include <string.h>
+
 #include "ppmHide.h"
 #include "bmpHide.h"
 #include "common.h"
 #include "commonHide.h"
 #include "hide.h"
-
-#include <stdlib.h>
-#include <string.h>
 
 // Parses input arguments to make sure they are valid, determines the input file and then uses the
 // correct encode function to encode the message into the image file.

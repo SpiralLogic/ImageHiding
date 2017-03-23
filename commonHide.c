@@ -2,7 +2,6 @@
 // Created by Sol Jennings on 13/3/17.
 //
 // Contains the common functionality required to hide an image
-
 #include <memory.h>
 #include <stdlib.h>
 #include "commonHide.h"
@@ -102,7 +101,7 @@ void setSecretMessage(char *message) {
     secretMessage = message;
 }
 
-// Gets the current secret message
+// Gets the current secret message pointer
 char *getSecretMessage(){
     return secretMessage;
 }

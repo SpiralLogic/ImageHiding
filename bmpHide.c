@@ -1,13 +1,13 @@
 //
 // Created by Sol Jennings on 13/3/17.
 //
+
 // Contains the functions for hiding a message in a BMP
+
 #include "common.h"
 #include "commonHide.h"
 #include "bmpCommon.h"
 #include "bmpHide.h"
-
-#define BMP_COLOR_DEPTH 24
 
 // Hides the given message in a bmp file_ptr
 // only 24 bit BMPs are support as these are the most popular and follow the same
@@ -15,7 +15,7 @@
 void hideInBmp(FILE *file_ptr, char *outputFile, char *message){
     struct ImageInfo imageInfo = getBmpImageInfo(file_ptr);
 
-    if (imageInfo.successRead == false) {
+    if (!imageInfo.successRead) {
         freeSecretMessage();
         errorAndExit(imageInfo.errorMesssage, file_ptr);
     }

@@ -1,7 +1,9 @@
 //
 // Created by Sol Jennings on 13/3/17.
 //
+
 // Main executable for unhiding a message in an image file
+
 #include "common.h"
 #include "ppmUnhide.h"
 #include "bmpUnhide.h"

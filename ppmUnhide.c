@@ -15,7 +15,7 @@ void unhidePpm(FILE *file_ptr) {
     struct ImageInfo imageInfo;
 
     imageInfo = getPpmImageInfo(file_ptr);
-    if (imageInfo.successRead == false) {
+    if (!imageInfo.successRead) {
         errorAndExit(imageInfo.errorMesssage, file_ptr);
     }
 

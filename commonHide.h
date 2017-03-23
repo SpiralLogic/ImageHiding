@@ -6,6 +6,7 @@
 
 #include <stdbool.h>
 #include <stdio.h>
+
 #include "common.h"
 
 void encodeImage(FILE *file_ptr, struct ImageInfo *imageInfo, char *outputFile, char *message);
@@ -14,5 +15,6 @@ void copyHeader(FILE *file_ptr, FILE *outfile_ptr, struct ImageInfo *imageInfo);
 void freeSecretMessage();
 void setSecretMessage(char *message);
 char *getSecretMessage();
+
 #endif //ASS1_COMMONHIDE_H
 

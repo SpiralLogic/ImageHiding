@@ -4,6 +4,7 @@
 // Contains all the common functionality to unhide an image
 #include <stdio.h>
 #include <stdlib.h>
+
 #include "commonUnhide.h"
 
 // decodes a 24 bit image from an input file. A null terminator \0 marks the end of the encoded message

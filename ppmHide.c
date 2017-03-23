@@ -1,9 +1,10 @@
 //
 // Created by Sol Jennings on 13/3/17.
 //
-// Contains all of the functionality
 
+// Contains all of the hide for ppm functionality
 #include <memory.h>
+
 #include "common.h"
 #include "commonHide.h"
 #include "ppmCommon.h"

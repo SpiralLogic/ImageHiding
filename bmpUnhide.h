@@ -5,6 +5,8 @@
 #ifndef ASS1_BMPUNHIDE_H
 #define ASS1_BMPUNHIDE_H
 
+#define BMP_COLOR_DEPTH 24
+
 #include <stdio.h>
 #include "common.h"
 

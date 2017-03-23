@@ -1,6 +1,7 @@
 //
 // Created by Sol Jennings on 13/3/17.
 //
+
 // All of the common BMP functions.
 #include "common.h"
 #include "bmpCommon.h"
@@ -20,12 +21,15 @@ struct ImageInfo getBmpImageInfo(FILE *file_ptr) {
         return imageInfo;
     }
 
+    // Find where the pixel information starts
     fseek(file_ptr, 10, SEEK_SET);
     fread(&imageInfo.pixelMapOffset, 4, 1, file_ptr);
 
+    // find the width
     fseek(file_ptr, 18, SEEK_SET);
     fread(&imageInfo.width, 4, 1, file_ptr);
 
+    // find the height
     fseek(file_ptr, 22, SEEK_SET);
     fread(&imageInfo.height, 4, 1, file_ptr);
 
