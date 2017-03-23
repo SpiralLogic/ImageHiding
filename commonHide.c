@@ -69,14 +69,8 @@ void encodeImage(FILE *file_ptr, struct ImageInfo *imageInfo, char *outputFile, 
 
 // Determines if the message can fit into the image
 bool doesMessageFit(struct ImageInfo *info, char *message) {
-    // The length of the message can't be stored in an int value. this is bad
-    // strlen returns a size_t which isn't necessarily the same size and an int
-    if ((strlen(message) + 1) > sizeof(int) * 8) {
-        return false;
-    }
-
     // extra 1 byte to store the null terminator
-    int length = (int) strlen(message) + 1;
+    size_t length = strlen(message) + 1;
 
     // it takes 3 pixels to store all 8 bits of 1 character.
     return (length * 8) < (info->height * info->width * 3);

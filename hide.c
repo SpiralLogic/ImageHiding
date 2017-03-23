@@ -6,15 +6,10 @@
 #include "bmpHide.h"
 #include "common.h"
 #include "commonHide.h"
+#include "hide.h"
 
 #include <stdlib.h>
 #include <string.h>
-
-// Size of the read in input buffer
-#define BUFF_SIZE 512
-
-void usage();
-char* readFromInput();
 
 // Parses input arguments to make sure they are valid, determines the input file and then uses the
 // correct encode function to encode the message into the image file.
@@ -96,7 +91,7 @@ char* readFromInput() {
         if(input == NULL)
         {
             free(old);
-            errorAndExit("Failed to reallocate content", NULL);
+            errorAndExit("Couldn't allocate anymore space for message", NULL);
         }
         strcat(input, buffer);
     }

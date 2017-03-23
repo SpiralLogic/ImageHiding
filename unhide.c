@@ -5,8 +5,7 @@
 #include "common.h"
 #include "ppmUnhide.h"
 #include "bmpUnhide.h"
-
-void usage();
+#include "unhide.h"
 
 // Parses input arguments to make sure they are valid, determines the input file and then uses the
 // correct decode function to decode the message from the image file.
