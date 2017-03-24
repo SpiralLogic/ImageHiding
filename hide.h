@@ -9,6 +9,5 @@
 #define BUFF_SIZE 512
 
 void usage();
-char* readFromInput();
 
 #endif //ASS1_HIDE_H_H

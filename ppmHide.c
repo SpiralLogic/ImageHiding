@@ -12,11 +12,10 @@
 
 #define PPM_COLOR_DEPTH 255
 
-void hideInPpm(FILE *file_ptr, char *outputFile, char *message) {
+struct ImageInfo verifyAndGetPpmInfo(FILE *file_ptr) {
     struct ImageInfo imageInfo = getPpmImageInfo(file_ptr);
 
-    if (imageInfo.successRead == false) {
-        freeSecretMessage();
+    if (!imageInfo.successRead) {
         errorAndExit(imageInfo.errorMesssage, file_ptr);
     }
 
@@ -25,14 +24,8 @@ void hideInPpm(FILE *file_ptr, char *outputFile, char *message) {
 #endif
 
     if (imageInfo.depth != PPM_COLOR_DEPTH) {
-        freeSecretMessage();
         errorAndExit("Image depth not supported", file_ptr);
     }
 
-    if (!doesMessageFit(&imageInfo, message)) {
-        freeSecretMessage();
-        errorAndExit("Message does not fit image", file_ptr);
-    }
-
-    encodeImage(file_ptr, &imageInfo, outputFile, message);
+    return imageInfo;
 }

@@ -6,18 +6,17 @@
 #include <stdlib.h>
 #include "commonHide.h"
 
-// The secret message pointer. Stored here so that it can be set free later!
-static char *secretMessage;
-
 // Encodes a message into a 24 bit pixel map
 // Each RGB colour in a pixel will store 1 bit of the message in it's least significant bit
-void encodeImage(FILE *file_ptr, struct ImageInfo *imageInfo, char *outputFile, char *message) {
-    remove(outputFile);
+void readAndEnocdeMessage(FILE *file_ptr, struct ImageInfo *imageInfo, char *outputFile) {
+    // Start with 1 byte for null terminator
+    size_t messageLength = 1, imageSize = imageInfo->height * imageInfo->width * 3;
+    int nextByte, inputChar;
 
+    remove(outputFile);
     FILE *outfile_ptr = fopen(outputFile, "w+");
 
     if (outfile_ptr == NULL) {
-        freeSecretMessage();
         errorAndExit("Cannot open output file", file_ptr);
     }
 
@@ -25,37 +24,31 @@ void encodeImage(FILE *file_ptr, struct ImageInfo *imageInfo, char *outputFile, 
 
     //Set to the start of the pixel map
     fseek(file_ptr, imageInfo->pixelMapOffset, SEEK_SET);
-
-    int messageLength = (int) strlen(message) + 1;
-    int messageBit;
-    int nextByte;
+    printf("Input secret message press ctrl+D 1-3 times when finished\n");
 
     // encode the message into the image and output it a byte at a time to the file
-    for (int i=0; i < messageLength; i++) {
-        for (int j = 0; j < 8; j++) {
-
-            // Stores the next message bit to encode
-            messageBit = (message[i] << j & 0x80)/0x80;
-            nextByte = fgetc(file_ptr);
-
-            if (nextByte == EOF) {
-                //Where is the rest of the image!
-                fclose(outfile_ptr);
-                remove(outputFile);
-                freeSecretMessage();
-                errorAndExit("Cannot encode into an incomplete image", file_ptr);
-            }
-
-            // Encodes the message bit into the least significant of the byte read from the original image
-            nextByte = (nextByte & 0xFE) | messageBit;
-            if (fputc(nextByte, outfile_ptr) == EOF) {
-                fclose(outfile_ptr);
-                remove(outputFile);
-                freeSecretMessage();
-                errorAndExit("Problem writing to output file", file_ptr);
-            }
+    while ((inputChar = getc(stdin)) != EOF) {
+        // Oh no!
+        if(ferror(stdin))
+        {
+            fclose(outfile_ptr);
+            errorAndExit("Error reading from stdin.", NULL);
         }
+
+        messageLength++;
+
+        if (messageLength * 8 > imageSize) {
+            fclose(outfile_ptr);
+            remove(outputFile);
+            errorAndExit("Message too big for image", file_ptr);
+        }
+        encodeByteToOutput(&inputChar, file_ptr, outfile_ptr, outputFile);
     }
+
+    inputChar = '\0';
+
+    // Add null terminator
+    encodeByteToOutput(&inputChar, file_ptr, outfile_ptr, outputFile);
 
     // Write the remaining image to the output file
     while ((nextByte = fgetc(file_ptr)) != EOF) {
@@ -63,16 +56,32 @@ void encodeImage(FILE *file_ptr, struct ImageInfo *imageInfo, char *outputFile, 
     }
 
     fclose(outfile_ptr);
-    printf("Output image: %s\n", outputFile);
 }
 
-// Determines if the message can fit into the image
-bool doesMessageFit(struct ImageInfo *info, char *message) {
-    // extra 1 byte to store the null terminator
-    size_t length = strlen(message) + 1;
+// takes in one byte, encodes that byte into the next 8 bytes of the input file and writes
+// it to the output file
+void encodeByteToOutput(int *byte, FILE *file_ptr, FILE *outfile_ptr, char *outputFile) {
+    int messageBit, nextByte;
 
-    // it takes 3 pixels to store all 8 bits of 1 character.
-    return (length * 8) < (info->height * info->width * 3);
+    for (int i = 0; i < 8; i++) {
+        // Stores the next message bit to encode
+        messageBit = ((*byte) << i & 0x80)/0x80;
+        nextByte = fgetc(file_ptr);
+
+        if (nextByte == EOF) {
+            fclose(outfile_ptr);
+            remove(outputFile);
+            errorAndExit("Cannot encode into incomplete image", file_ptr);
+        }
+
+        // Encodes the message bit into the least significant of the byte read from the original image
+        nextByte = (nextByte & 0xFE) | messageBit;
+        if (fputc(nextByte, outfile_ptr) == EOF || ferror(outfile_ptr)) {
+            fclose(outfile_ptr);
+            remove(outputFile);
+            errorAndExit("Error writing to output file", file_ptr);
+        }
+    }
 }
 
 // Copies the header from the input image to the output image.
@@ -85,7 +94,6 @@ void copyHeader(FILE *file_ptr, FILE *outfile_ptr, struct ImageInfo *imageInfo) 
     while ((nextByte = fgetc(file_ptr)) != EOF && charsCopied < imageInfo->pixelMapOffset)
     {
         if (nextByte == EOF) {
-            freeSecretMessage();
             errorAndExit("Unexpected end of file_ptr", file_ptr);
         }
 
@@ -94,24 +102,3 @@ void copyHeader(FILE *file_ptr, FILE *outfile_ptr, struct ImageInfo *imageInfo) 
     }
 
 }
-
-
-// sets the current secret message
-void setSecretMessage(char *message) {
-    secretMessage = message;
-}
-
-// Gets the current secret message pointer
-char *getSecretMessage(){
-    return secretMessage;
-}
-
-// frees the memory held by the secret message
-void freeSecretMessage() {
-    if (secretMessage != NULL) {
-        free(secretMessage);
-        secretMessage = NULL;
-    }
-}
-
-

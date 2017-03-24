@@ -13,7 +13,7 @@ void unhideBmp(FILE *file_ptr) {
 
     imageInfo = getBmpImageInfo(file_ptr);
 
-    if (imageInfo.successRead == false) {
+    if (!imageInfo.successRead) {
         errorAndExit(imageInfo.errorMesssage, file_ptr);
     }
     if (imageInfo.depth != BMP_COLOR_DEPTH) {

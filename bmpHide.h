@@ -9,6 +9,6 @@
 #include <stdio.h>
 #include "common.h"
 
-void hideInBmp(FILE *file_ptr, char *outputFile, char *message);
+struct ImageInfo verifyAndGetBmpInfo(FILE *file_ptr);
 
 #endif //ASS1_BMPHIDE_H

@@ -10,7 +10,7 @@
 
 #include "common.h"
 
-void hideInPpm(FILE *file_ptr, char *outputFile, char *message);
+struct ImageInfo verifyAndGetPpmInfo(FILE *file_ptr);
 
 #endif //ASS1_PPMHIDE_H
 

@@ -9,12 +9,9 @@
 
 #include "common.h"
 
-void encodeImage(FILE *file_ptr, struct ImageInfo *imageInfo, char *outputFile, char *message);
-bool doesMessageFit(struct ImageInfo *imageInfo, char *message);
+void readAndEnocdeMessage(FILE *file_ptr, struct ImageInfo *imageInfo, char *outputFile);
 void copyHeader(FILE *file_ptr, FILE *outfile_ptr, struct ImageInfo *imageInfo);
-void freeSecretMessage();
-void setSecretMessage(char *message);
-char *getSecretMessage();
+void encodeByteToOutput(int *byte, FILE *file_ptr, FILE *outfile_ptr, char *outputFile);
 
 #endif //ASS1_COMMONHIDE_H
 
