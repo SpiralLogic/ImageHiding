@@ -30,7 +30,7 @@ void readAndEncodeMessage(FILE *file_ptr, struct ImageInfo *imageInfo, char *out
     printf("Input secret message press ctrl+D 1-3 times when finished\n");
 
     // encode the message into the image and output it a byte at a time to the file
-    while ((inputChar = getc(stdin)) != EOF) {
+    while ((inputChar = fgetc(stdin)) != EOF) {
         // Oh no!
         if (ferror(stdin)) {
             fclose(outfile_ptr);

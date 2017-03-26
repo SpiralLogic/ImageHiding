@@ -51,7 +51,7 @@ int main(int argc, char *argv[]) {
 
     readAndEncodeMessage(file_ptr, &imageInfo, outputFile);
     fclose(file_ptr);
-    printf("Successfully hid message in %s!\n ", outputFile);
+    printf("\nSuccessfully hid message in %s!\n", outputFile);
 
     return 0;
 }
