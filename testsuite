@@ -11,14 +11,15 @@ $VALGRIND ./unhide >> log.txt 2>&1
 $VALGRIND ./unhide images/6pixels.ppm outputimages/test1.ppm toomany >> log.txt 2>&1
 
 printf "Tests to make sure that a malformed ppm header is no good" | $VALGRIND ./hide images/cross3.ppm outputimages/cross3.ppm >> log.txt 2>&1
+printf "Test won't fit" | $VALGRIND ./hide images/6pixels.ppm outputimages/6pixels.ppm >> log.txt 2>&1
+printf "Test incomplete image" | $VALGRIND ./hide images/incompleteimage.ppm outputimages/6pixels.ppm >> log.txt 2>&1
+printf "Test missing pixel map" | $VALGRIND ./hide images/nopixelmap.ppm outputimages/6pixels.ppm >> log.txt 2>&1
 
 printf "Tests to make sure that a # in the binary section isn't considered a header" | $VALGRIND ./hide images/cross2.pbm outputimages/cross2.ppm >> log.txt 2>&1
 $VALGRIND ./unhide outputimages/cross2.ppm  >> log.txt 2>&1
 
 printf "S" | $VALGRIND ./hide images/6pixelswhite.ppm outputimages/6pixelswhite.ppm >> log.txt 2>&1
 $VALGRIND ./unhide outputimages/6pixelswhite.ppm  >> log.txt 2>&1
-
-printf "test" | $VALGRIND ./hide images/6pixels.ppm outputimages/6pixels.ppm >> log.txt 2>&1
 
 printf "t" | $VALGRIND ./hide images/6pixels.ppm outputimages/6pixels.ppm  >> log.txt 2>&1
 $VALGRIND ./unhide outputimages/6pixels.ppm  >> log.txt 2>&1
@@ -41,26 +42,27 @@ $VALGRIND ./unhide outputimages/cross.ppm  >> log.txt 2>&1
 printf "wawawa woot woot" | $VALGRIND ./hide images/dot2.pbm outputimages/dot2.ppm >> log.txt 2>&1
 $VALGRIND ./unhide outputimages/dot2.ppm  >> log.txt 2>&1
 
-printf "w" | $VALGRIND ./hide images/incompleteimage.ppm outputimages/output.ppm >> log.txt 2>&1
-
-printf "missing bad news" | $VALGRIND ./hide images/nopixelmap.ppm outputimages/output.ppm >> log.txt 2>&1
-
 printf "Testing double encode" | $VALGRIND ./hide images/test.ppm outputimages/output.ppm >> log.txt 2>&1
 $VALGRIND ./unhide outputimages/output.ppm  >> log.txt 2>&1
 
+ls -la | $VALGRIND ./hide images/cross.pbm outputimages/directorymap.ppm >> log.txt 2>&1
+$VALGRIND ./unhide outputimages/directorymap.ppm  >> log.txt 2>&1
+
 printf "Testing a 32bit" | $VALGRIND ./hide images/3pixels32bit.bmp outputimages/3pixels32bit.bmp >> log.txt 2>&1
+printf "testing won't fit" | $VALGRIND ./hide images/6pixels.bmp outputimages/6pixels.bmp >> log.txt 2>&1
+printf "naughty bmp" | $VALGRIND ./hide images/bad.bmp outputimages/bad.bmp >> log.txt 2>&1
+printf "shouldn't work" | $VALGRIND ./hide images/LAND2.bmp outputimages/LAND2.bmp >> log.txt 2>&1
+printf "w" | $VALGRIND ./hide images/incompleteimage.ppm outputimages/output.ppm >> log.txt 2>&1
+printf "missing bad news" | $VALGRIND ./hide images/nopixelmap.ppm outputimages/output.ppm >> log.txt 2>&1
 
 printf "t" | $VALGRIND ./hide images/6pixels.bmp outputimages/6pixels.bmp >> log.txt 2>&1
 $VALGRIND ./unhide outputimages/6pixels.bmp  >> log.txt 2>&1
-
-printf "testing won't fit" | $VALGRIND ./hide images/6pixels.bmp outputimages/6pixels.bmp >> log.txt 2>&1
-
-printf "naughty bmp" | $VALGRIND ./hide images/bad.bmp outputimages/bad.bmp >> log.txt 2>&1
-
-printf "shouldn't work" | $VALGRIND ./hide images/LAND2.bmp outputimages/LAND2.bmp >> log.txt 2>&1
 
 printf "YAY! BMP" | $VALGRIND ./hide images/onza.bmp outputimages/onza.bmp >> log.txt 2>&1
 $VALGRIND ./unhide outputimages/onza.bmp  >> log.txt 2>&1
 
 printf "Testing Double encdoe" | $VALGRIND ./hide images/output.bmp outputimages/output.bmp >> log.txt 2>&1
 $VALGRIND ./unhide outputimages/output.bmp  >> log.txt 2>&1
+
+ls -la | $VALGRIND ./hide images/onza.bmp outputimages/directorymap.bmp >> log.txt 2>&1
+$VALGRIND ./unhide outputimages/directorymap.bmp  >> log.txt 2>&1

@@ -1,5 +1,4 @@
 #####################################################################
-
                           	  3042 Assignment 1
                           	      Hide/Unhide
                           	  Image Steganography
@@ -21,11 +20,10 @@ Standard Binary PPM
 
 COMPILING:
 ############
-
 GCC is used to compile and compilation should be supported up until C99
 The program can be complied in the following ways:
 
-make clean			  	- cleans any previous compliation and removes any output files
+make clean			  	- cleans any previous compilation and removes any output files
 
 make all  				- makes both hide and unhide
 make hide 				- makes hide only
@@ -73,6 +71,10 @@ message lengths which are too long.
 
 Piping is supported. Example
 printf "Test" | ./hide input.ppm output.ppm
+
+Minimal memory is used during hiding as 1 character from input, read from file encoded and then written to the output
+image
+
 
 TEST SUITE:
 ########################
