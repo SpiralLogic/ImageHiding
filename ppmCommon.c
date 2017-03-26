@@ -1,16 +1,19 @@
-//
-// Created by Sol Jennings on 13/3/17.
-//
-// Contains the common functionality required for PPM file
+/*
+ * Created by Sol Jennings on 13/3/17.
+ *
+ * Contains the common functionality required for PPM file
+*/
 #include <stdio.h>
 #include <stdbool.h>
 
 #include "common.h"
 #include "ppmCommon.h"
 
-// Reads the information about a PPM image from the header
+/*
+ * Reads the information about a PPM image from the header
+*/
 struct ImageInfo getPpmImageInfo(FILE *file_ptr) {
-    struct ImageInfo imageInfo = {.height = 0, .width =0, .depth = 0, .pixelMapOffset = 0, .successRead = false };
+    struct ImageInfo imageInfo = {.height = 0, .width =0, .depth = 0, .pixelMapOffset = 0, .successRead = false};
     bool headerComplete = false;
     int nextChar;
     int currentDimension = 0;
@@ -55,21 +58,17 @@ struct ImageInfo getPpmImageInfo(FILE *file_ptr) {
         }
 
         switch (currentDimension) {
-            case 0:
-                imageInfo.width = dimensionValue;
+            case 0:imageInfo.width = dimensionValue;
                 currentDimension++;
                 break;
-            case 1:
-                imageInfo.height = dimensionValue;
+            case 1:imageInfo.height = dimensionValue;
                 currentDimension++;
                 break;
-            case 2:
-                imageInfo.depth = dimensionValue;
+            case 2:imageInfo.depth = dimensionValue;
                 moveFileToNextLine(file_ptr);
                 headerComplete = true;
                 break;
-            default:
-                imageInfo.errorMesssage = "Bad header detected";
+            default:imageInfo.errorMesssage = "Bad header detected";
                 return imageInfo;
         }
     }
@@ -81,7 +80,9 @@ struct ImageInfo getPpmImageInfo(FILE *file_ptr) {
     return imageInfo;
 }
 
-// Scans a dimension from the image file and return -1 if none was found
+/*
+ * Scans a dimension from the image file and return -1 if none was found
+*/
 int scanDimension(FILE *file_ptr) {
     int dimension;
     if (fscanf(file_ptr, "%i", &dimension) < 1) {
@@ -91,7 +92,9 @@ int scanDimension(FILE *file_ptr) {
     return dimension;
 }
 
-// Moves to the next line of the file
+/*
+ * Moves to the next line of the file
+*/
 bool moveFileToNextLine(FILE *file_ptr) {
     int nextChar;
     while ((nextChar = fgetc(file_ptr)) != EOF) {

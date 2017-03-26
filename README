@@ -16,7 +16,7 @@ This following set of tools written in C allows for the hiding of
 a message with images.
 
 Currently supported images are:
-Plain Binary PPM
+Standard Binary PPM
 24 bit BMPs
 
 COMPILING:
@@ -58,7 +58,6 @@ If the image does not contain a message then the output message may be garbled o
 
 The output of the message will be start and end with a line of '########################'
 
-
 SUPPORTED FUNCTIONALITY:
 ########################
 Both hiding and unhiding a message within both a 24Bit (255 depth) standard PPM image and 24 Bit BMP images.
@@ -77,9 +76,16 @@ printf "Test" | ./hide input.ppm output.ppm
 
 TEST SUITE:
 ########################
+0 successful execution
+1 failed execution (printed to stderr)
+
+
+TEST SUITE:
+########################
 A test suite of images is provided. This runs a series of tests through both unhide and hide.
 Results are stored in log.txt and included leak detection form valgrind
 
 Unfortunately results need to be via manual inspection.
 This can be done with
 less log.txt
+

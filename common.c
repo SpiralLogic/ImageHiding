@@ -1,12 +1,15 @@
-//
-// Created by Sol Jennings on 13/3/17.
-//
+/*
+ * Created by Sol Jennings on 13/3/17.
+ *
+ * Includes common functions used in both hiding and unhiding
+*/
 
-// Includes common functions used in both hiding and unhiding
 #include <stdlib.h>
 #include "common.h"
 
-// Gets the type of image based on the magic number read from the file header
+/*
+ * Gets the type of image based on the magic number read from the file header
+*/
 enum ImageType getImageType(FILE *file_ptr) {
     int firstChar, secondChar;
     rewind(file_ptr);
@@ -25,8 +28,10 @@ enum ImageType getImageType(FILE *file_ptr) {
     return unsupported;
 }
 
-// Prints an error message and exits. Also puts the error message in stderr
-// closes a file pointer if it is open
+/*
+ * Prints an error message and exits. Also puts the error message in stderr
+ * closes a file pointer if it is open
+*/
 void errorAndExit(char *error, FILE *file_ptr) {
     if (file_ptr != NULL) {
         fclose(file_ptr);
@@ -35,8 +40,10 @@ void errorAndExit(char *error, FILE *file_ptr) {
     exit(1);
 }
 
-// Prints a message and exits
-// closes a file pointer if it is open
+/*
+ * Prints a message and exits
+ * closes a file pointer if it is open
+*/
 void messageAndExit(char *message, FILE *file_ptr) {
     if (file_ptr != NULL) {
         fclose(file_ptr);
@@ -47,7 +54,9 @@ void messageAndExit(char *message, FILE *file_ptr) {
 
 #ifdef DEBUG
 
-// Prints the information about an image
+/*
+* Prints the information about an image
+*/
 void printImageInfo(struct ImageInfo *imageInfo) {
     printf("width %d\n", (*imageInfo).width);
     printf("height %d\n", (*imageInfo).height);
@@ -55,7 +64,9 @@ void printImageInfo(struct ImageInfo *imageInfo) {
     printf("image offset %ld\n", (*imageInfo).pixelMapOffset);
 }
 
-// Prints a byte out as bits
+/*
+* Prints a byte out as bits
+*/
 void printByteBits(int byte) {
     for (int j = 0; j < 8; j++) {
         printf("%d",(byte << j & 0x80)/ 0x80);

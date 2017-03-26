@@ -10,6 +10,8 @@ $VALGRIND ./hide images/6pixels.ppm outputimages/test1.ppm toomany >> log.txt 2>
 $VALGRIND ./unhide >> log.txt 2>&1
 $VALGRIND ./unhide images/6pixels.ppm outputimages/test1.ppm toomany >> log.txt 2>&1
 
+printf "Tests to make sure that a malformed ppm header is no good" | $VALGRIND ./hide images/cross3.pbm outputimages/cross3.ppm >> log.txt 2>&1
+
 printf "Tests to make sure that a # in the binary section isn't considered a header" | $VALGRIND ./hide images/cross2.pbm outputimages/cross2.ppm >> log.txt 2>&1
 $VALGRIND ./unhide outputimages/cross2.ppm  >> log.txt 2>&1
 

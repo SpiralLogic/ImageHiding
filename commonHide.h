@@ -1,6 +1,7 @@
-//
-// Created by Sol Jennings on 13/3/17.
-//
+/*
+ * Created by Sol Jennings on 13/3/17.
+*/
+
 #ifndef ASS1_COMMONHIDE_H
 #define ASS1_COMMONHIDE_H
 
@@ -9,7 +10,7 @@
 
 #include "common.h"
 
-void readAndEnocdeMessage(FILE *file_ptr, struct ImageInfo *imageInfo, char *outputFile);
+void readAndEncodeMessage(FILE *file_ptr, struct ImageInfo *imageInfo, char *outputFile);
 void copyHeader(FILE *file_ptr, FILE *outfile_ptr, struct ImageInfo *imageInfo);
 void encodeByteToOutput(int *byte, FILE *file_ptr, FILE *outfile_ptr, char *outputFile);
 

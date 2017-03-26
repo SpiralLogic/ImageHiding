@@ -1,14 +1,17 @@
-//
-// Created by Sol Jennings on 13/3/17.
-//
-// Contains the common functionality required to hide an image
+/*
+ * Created by Sol Jennings on 13/3/17.
+ *
+ * Contains the common functionality required to hide an image
+*/
 #include <memory.h>
 #include <stdlib.h>
 #include "commonHide.h"
 
-// Encodes a message into a 24 bit pixel map
-// Each RGB colour in a pixel will store 1 bit of the message in it's least significant bit
-void readAndEnocdeMessage(FILE *file_ptr, struct ImageInfo *imageInfo, char *outputFile) {
+/*
+ * Encodes a message into a 24 bit pixel map
+ * Each RGB colour in a pixel will store 1 bit of the message in it's least significant bit
+ */
+void readAndEncodeMessage(FILE *file_ptr, struct ImageInfo *imageInfo, char *outputFile) {
     // Start with 1 byte for null terminator
     size_t messageLength = 1, imageSize = imageInfo->height * imageInfo->width * 3;
     int nextByte, inputChar;
@@ -29,8 +32,7 @@ void readAndEnocdeMessage(FILE *file_ptr, struct ImageInfo *imageInfo, char *out
     // encode the message into the image and output it a byte at a time to the file
     while ((inputChar = getc(stdin)) != EOF) {
         // Oh no!
-        if(ferror(stdin))
-        {
+        if (ferror(stdin)) {
             fclose(outfile_ptr);
             errorAndExit("Error reading from stdin.", NULL);
         }
@@ -42,6 +44,7 @@ void readAndEnocdeMessage(FILE *file_ptr, struct ImageInfo *imageInfo, char *out
             remove(outputFile);
             errorAndExit("Message too big for image", file_ptr);
         }
+
         encodeByteToOutput(&inputChar, file_ptr, outfile_ptr, outputFile);
     }
 
@@ -58,14 +61,16 @@ void readAndEnocdeMessage(FILE *file_ptr, struct ImageInfo *imageInfo, char *out
     fclose(outfile_ptr);
 }
 
-// takes in one byte, encodes that byte into the next 8 bytes of the input file and writes
-// it to the output file
+/*
+ * takes in one byte, encodes that byte into the next 8 bytes of the input file and writes
+ * it to the output file
+*/
 void encodeByteToOutput(int *byte, FILE *file_ptr, FILE *outfile_ptr, char *outputFile) {
     int messageBit, nextByte;
 
     for (int i = 0; i < 8; i++) {
         // Stores the next message bit to encode
-        messageBit = ((*byte) << i & 0x80)/0x80;
+        messageBit = ((*byte) << i & 0x80) / 0x80;
         nextByte = fgetc(file_ptr);
 
         if (nextByte == EOF) {
@@ -76,6 +81,7 @@ void encodeByteToOutput(int *byte, FILE *file_ptr, FILE *outfile_ptr, char *outp
 
         // Encodes the message bit into the least significant of the byte read from the original image
         nextByte = (nextByte & 0xFE) | messageBit;
+
         if (fputc(nextByte, outfile_ptr) == EOF || ferror(outfile_ptr)) {
             fclose(outfile_ptr);
             remove(outputFile);
@@ -84,21 +90,22 @@ void encodeByteToOutput(int *byte, FILE *file_ptr, FILE *outfile_ptr, char *outp
     }
 }
 
-// Copies the header from the input image to the output image.
+/*
+ * Copies the header from the input image to the output image.
+*/
 void copyHeader(FILE *file_ptr, FILE *outfile_ptr, struct ImageInfo *imageInfo) {
     int nextByte;
     long charsCopied = 0;
 
     rewind(file_ptr);
 
-    while ((nextByte = fgetc(file_ptr)) != EOF && charsCopied < imageInfo->pixelMapOffset)
-    {
-        if (nextByte == EOF) {
-            errorAndExit("Unexpected end of file_ptr", file_ptr);
+    // copy each byte until the pixel map of the image is reached
+    while ((nextByte = fgetc(file_ptr)) != EOF && charsCopied < imageInfo->pixelMapOffset) {
+        if (nextByte == EOF || ferror(file_ptr)) {
+            errorAndExit("Unexpected end of file", file_ptr);
         }
 
         fputc(nextByte, outfile_ptr);
         charsCopied++;
     }
-
 }

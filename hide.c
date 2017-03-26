@@ -1,8 +1,9 @@
-//
-// Created by Sol Jennings on 13/3/17.
-//
+/*
+ * Created by Sol Jennings on 13/3/17.
+ *
+ * Main executable for hiding a message in an image file
+*/
 
-// Main executable for hiding a message in an image file
 #include <stdlib.h>
 #include <string.h>
 
@@ -12,8 +13,10 @@
 #include "commonHide.h"
 #include "hide.h"
 
-// Parses input arguments to make sure they are valid, determines the input file and then uses the
-// correct encode function to encode the message into the image file.
+/*
+ * Parses input arguments to make sure they are valid, determines the input file and then uses the
+ * correct encode function to encode the message into the image file.
+*/
 int main(int argc, char *argv[]) {
     char *imageFile;
     char *outputFile;
@@ -46,14 +49,16 @@ int main(int argc, char *argv[]) {
         imageInfo = verifyAndGetBmpInfo(file_ptr);
     }
 
-    readAndEnocdeMessage(file_ptr, &imageInfo, outputFile);
+    readAndEncodeMessage(file_ptr, &imageInfo, outputFile);
     fclose(file_ptr);
     printf("Successfully hid message in %s!\n ", outputFile);
 
     return 0;
 }
 
-// displays the use for this command
+/*
+ * displays the use for this command
+*/
 void usage() {
     printf("\nUsage\n");
     printf("./hide inputimage outputfile\n");
