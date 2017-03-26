@@ -75,7 +75,6 @@ printf "Test" | ./hide input.ppm output.ppm
 Minimal memory is used during hiding as 1 character from input, read from file encoded and then written to the output
 image
 
-
 TEST SUITE:
 ########################
 0 successful execution
