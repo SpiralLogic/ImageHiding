@@ -1,4 +1,4 @@
-/*
+/**
  * Created by Sol Jennings on 13/3/17.
  *
  * Contains the functions for hiding a message in a BMP
@@ -9,7 +9,7 @@
 #include "bmpCommon.h"
 #include "bmpHide.h"
 
-/*
+/**
  * Hides the given message in a bmp file
  * only 24 bit BMPs are support as these are the most popular and use 255 bits for each pixel
 */

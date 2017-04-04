@@ -1,4 +1,4 @@
-/*
+/**
  * Created by Sol Jennings on 13/3/17.
  *
  * Contains the functions for decoding a message in a BMP
@@ -8,7 +8,7 @@
 #include "bmpCommon.h"
 #include "commonUnhide.h"
 
-/*
+/**
  * Unhides an encoded message from a BMP file
 */
 void unhideBmp(FILE *file_ptr) {

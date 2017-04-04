@@ -35,10 +35,10 @@ $(UNHIDE_PROGRAM): unhide.c ppmUnhide.c common.c ppmCommon.c
 alldebug: clean $(HIDE_PROGRAM)$(DEBUGGING) $(UNHIDE_PROGRAM)$(DEBUGGING)
 
 $(HIDE_PROGRAM)$(DEBUGGING): hide.c ppmHide.c common.c ppmCommon.c
-	$(CC) $(CFLAGS) -DDEBUG -o $(HIDE_PROGRAM) $(HIDEFILES)
+	$(CC) $(CFLAGS) -DDEBUG -g -o $(HIDE_PROGRAM) $(HIDEFILES)
 
 $(UNHIDE_PROGRAM)$(DEBUGGING): unhide.c ppmUnhide.c common.c ppmCommon.c
-	$(CC) $(CFLAGS) -DDEBUG -o $(UNHIDE_PROGRAM) $(UNHIDEFILES)
+	$(CC) $(CFLAGS) -DDEBUG -g -o $(UNHIDE_PROGRAM) $(UNHIDEFILES)
 
 #################################
 # clean

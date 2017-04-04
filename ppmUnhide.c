@@ -1,4 +1,4 @@
-/*
+/**
  * Created by Sol Jennings on 13/3/17.
  *
  * Contains all of the functionality required to unhide a message from a PPM image
@@ -11,7 +11,7 @@
 
 #define PPM_COLOR_DEPTH 255
 
-/*
+/**
  * unhides the message from a PPM file
 */
 void unhidePpm(FILE *file_ptr) {

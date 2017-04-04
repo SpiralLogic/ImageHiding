@@ -1,4 +1,4 @@
-/*
+/**
  * Created by Sol Jennings on 13/3/17.
  *
  * Contains all of the hide for ppm functionality
@@ -10,7 +10,7 @@
 #include "ppmCommon.h"
 #include "ppmHide.h"
 
-/*
+/**
  * Get's the image information for a PPM image and verifies that
  * A message can be hidden in it
  */

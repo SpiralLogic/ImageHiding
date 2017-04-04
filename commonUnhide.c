@@ -1,4 +1,4 @@
-/*
+/**
  * Created by Sol Jennings on 13/3/17.
  *
  * Contains all the common functionality to unhide an image
@@ -8,7 +8,7 @@
 
 #include "commonUnhide.h"
 
-/*
+/**
  * decodes a 24 bit image from a  file. A null terminator \0 marks the end of the encoded message
 */
 void decodeImage(FILE *file_ptr, struct ImageInfo *imageInfo) {
