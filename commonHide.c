@@ -6,50 +6,79 @@
 #include <memory.h>
 #include <stdlib.h>
 #include "commonHide.h"
-
+#include "ppmCommon.h"
+#include "bmpCommon.h"
 /**
  * Encodes a message into a 24 bit pixel map
  * Each RGB colour in a pixel will store 1 bit of the message in it's least significant bit
  */
-void encodeMessageInFile(FILE *file_ptr, char *outputFile, struct ImageInfo *imageInfo, MessageInfo *messageInfo) {
+void encodeMessageInFile(char *inputFile, char *outputFile, MessageInfo *messageInfo) {
     // Start with 1 byte for null terminator
-    size_t imageSize = imageInfo->height * imageInfo->width * 3;
+    size_t imageSize;
+    FILE *outfile_ptr, *inputfile_ptr;
+    enum ImageType imageType;
+    struct ImageInfo *imageInfo_ptr;
+    struct ImageInfo imageInfo;
     int nextByte;
 
-    remove(outputFile);
-    FILE *outfile_ptr = fopen(outputFile, "w+");
+    inputfile_ptr = fopen(inputFile, "r");
 
-    if (outfile_ptr == NULL) {
-        errorAndExit("Cannot open output file", file_ptr);
+    if (inputfile_ptr == NULL) {
+        errorAndExit("Cannot open file", NULL);
     }
 
-    copyHeader(file_ptr, outfile_ptr, imageInfo);
+    // Work out input image information
+    imageType = getImageType(inputfile_ptr);
+    if (imageType == unsupported) {
+        errorAndExit("Image type unsupported", inputfile_ptr);
+    }
+
+    if (imageType == ppm) {
+        imageInfo = verifyAndGetPpmInfo(inputfile_ptr);
+    } else if (imageType == bmp) {
+        imageInfo = verifyAndGetBmpInfo(inputfile_ptr);
+    }
+
+    imageInfo_ptr = &imageInfo;
+    imageInfo_ptr->filename = inputFile;
+
+    imageSize = imageInfo_ptr->height * imageInfo_ptr->width * 3;
+
+    // Remove output file if it exists and attempted to output
+    remove(outputFile);
+    outfile_ptr = fopen(outputFile, "w+");
+
+    if (outfile_ptr == NULL) {
+        errorAndExit("Cannot open output file", inputfile_ptr);
+    }
+
+    copyHeader(inputfile_ptr, outfile_ptr, imageInfo_ptr);
 
     //Set to the start of the pixel map
-    fseek(file_ptr, imageInfo->pixelMapOffset, SEEK_SET);
+    fseek(inputfile_ptr, imageInfo_ptr->pixelMapOffset, SEEK_SET);
 
     if (messageInfo->length * 8 > imageSize) {
         fclose(outfile_ptr);
         remove(outputFile);
         freeSecretMessageStruct(messageInfo);
-        errorAndExit("Message too big for image", file_ptr);
+        errorAndExit("Message too big for image", inputfile_ptr);
     }
-
 
     // encode the message into the image and output it a byte at a time to the file
     for (size_t i = messageInfo->currentPos; i < messageInfo->length; i++) {
         nextByte = messageInfo->message[i];
-        encodeByteToOutput(nextByte, file_ptr, outfile_ptr, outputFile, messageInfo);
+        encodeByteToOutput(nextByte, inputfile_ptr, outfile_ptr, outputFile, messageInfo);
     }
 
     // Add null terminator
-    encodeByteToOutput('\0', file_ptr, outfile_ptr, outputFile, NULL);
+    encodeByteToOutput('\0', inputfile_ptr, outfile_ptr, outputFile, NULL);
 
     // Write the remaining image to the output file
-    while ((nextByte = fgetc(file_ptr)) != EOF) {
+    while ((nextByte = fgetc(inputfile_ptr)) != EOF) {
         fputc(nextByte, outfile_ptr);
     }
 
+    fclose(inputfile_ptr);
     fclose(outfile_ptr);
 }
 
@@ -87,14 +116,14 @@ void encodeByteToOutput(int byte, FILE *file_ptr, FILE *outfile_ptr, char *outpu
 /**
  * Copies the header from the input image to the output image.
 */
-void copyHeader(FILE *file_ptr, FILE *outfile_ptr, struct ImageInfo *imageInfo) {
+void copyHeader(FILE *file_ptr, FILE *outfile_ptr, struct ImageInfo *imageInfo_ptr) {
     int nextByte;
     long charsCopied = 0;
 
     rewind(file_ptr);
 
     // copy each byte until the pixel map of the image is reached
-    while ((nextByte = fgetc(file_ptr)) != EOF && charsCopied < imageInfo->pixelMapOffset) {
+    while ((nextByte = fgetc(file_ptr)) != EOF && charsCopied < imageInfo_ptr->pixelMapOffset) {
         fputc(nextByte, outfile_ptr);
         charsCopied++;
     }
@@ -127,3 +156,53 @@ void freeSecretMessageStruct(MessageInfo *messageInfo) {
 }
 
 
+
+/**
+ * Reads a set of characters from the standard in until an EOF/Ctrl+D is reached
+ */
+char* readFromInput() {
+    char buffer[BUFF_SIZE];
+    size_t inputSize = 1; // includes NULL
+
+    /** Preallocate space.  We could just allocate one char here,
+    but that wouldn't be efficient. */
+    char *input = malloc(sizeof(char) * BUFF_SIZE);
+
+    if(input == NULL)
+    {
+        errorAndExit("Failed to allocate content", NULL);
+    } else
+    {
+        input[0] = '\0'; // make null-terminated
+    }
+
+    // Dunno why sometimes I need to use 3
+    printf("Input secret message press ctrl+D 1-3 times when finished\n");
+
+    // Keep reading a buffer sized amount of characters until EOF is reached
+    while(fgets(buffer, BUFF_SIZE, stdin))
+    {
+        char *old = input;
+        inputSize += strlen(buffer);
+
+        // We need more memory!
+        input = realloc(input, inputSize);
+
+        if(input == NULL)
+        {
+            free(old);
+            errorAndExit("Couldn't allocate anymore space for message", NULL);
+        }
+        strcat(input, buffer);
+    }
+
+    // Oh no!
+    if(ferror(stdin))
+    {
+        free(input);
+        errorAndExit("Error reading from stdin.", NULL);
+    }
+
+    //returns the pointer to the read in string
+    return input;
+}

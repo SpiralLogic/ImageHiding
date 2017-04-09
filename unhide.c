@@ -5,8 +5,7 @@
 */
 
 #include "common.h"
-#include "ppmUnhide.h"
-#include "bmpUnhide.h"
+#include "commonUnhide.h"
 #include "unhide.h"
 
 /**
@@ -15,7 +14,6 @@
 */
 int main(int argc, char *argv[]) {
     char *imageFile;
-    enum ImageType imageType;
 
     if (argc != 2) {
         usage();
@@ -23,24 +21,9 @@ int main(int argc, char *argv[]) {
     }
 
     imageFile = argv[1];
-
-    FILE *file_ptr = fopen(imageFile, "r");
-
-    if (file_ptr == NULL) {
-        errorAndExit("Cannot open file", NULL);
-    }
-
-    imageType = getImageType(file_ptr);
-
-    if (imageType == unsupported) {
-        errorAndExit("Image type unsupported", file_ptr);
-    }
-
-    if (imageType == ppm) {
-        unhidePpm(file_ptr);
-    } else if (imageType == bmp) {
-        unhideBmp(file_ptr);
-    }
+    printf("##################\n");
+    decodeImage(imageFile);
+    printf("\n##################\n");
 
     return 0;
 }

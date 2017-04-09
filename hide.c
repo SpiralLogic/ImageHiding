@@ -6,11 +6,14 @@
 
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
+#include <errno.h>
+#include <limits.h>
 
-#include "ppmHide.h"
-#include "bmpHide.h"
 #include "common.h"
 #include "commonHide.h"
+#include "bmpCommon.h"
+#include "ppmCommon.h"
 #include "hide.h"
 
 /**
@@ -18,48 +21,126 @@
  * correct encode function to encode the message into the image file.
 */
 int main(int argc, char *argv[]) {
-    char *imageFile;
+
+    if (strcmp(argv[1], "-m") == 0) {
+        mSwitch(argc, argv);
+    }
+    else if (strcmp(argv[1], "-p") == 0) {
+        pSwitch(argc, argv);
+    }
+    else if (strcmp(argv[1], "-s") == 0) {
+        sSwitch(argc, argv);
+    } else {
+        noSwitch(argc, argv);
+    }
+
+    return 0;
+}
+
+/**
+ * Handles the case where no switches are given
+ *
+ * @param argv original input parameters
+ */
+void noSwitch(int argc, char *argv[]) {
+    char *inputFile;
     char *outputFile;
-    enum ImageType imageType;
-    struct ImageInfo imageInfo;
 
     if (argc != 3) {
         usage();
         errorAndExit("Incorrect number of parameters passed", NULL);
     }
 
-    imageFile = argv[1];
+    inputFile = argv[1];
     outputFile = argv[2];
-
-    FILE *file_ptr = fopen(imageFile, "r");
-
-    if (file_ptr == NULL) {
-        errorAndExit("Cannot open file", NULL);
-    }
-
-    imageType = getImageType(file_ptr);
-
-    if (imageType == unsupported) {
-        errorAndExit("Image type unsupported", file_ptr);
-    }
-
-    if (imageType == ppm) {
-        imageInfo = verifyAndGetPpmInfo(file_ptr);
-    } else if (imageType == bmp) {
-        imageInfo = verifyAndGetBmpInfo(file_ptr);
-    }
 
     MessageInfo messageInfo = createSecretMessageStruct(readFromInput());
 
-    imageInfo.filename = imageFile;
-    encodeMessageInFile(file_ptr, outputFile, &imageInfo, &messageInfo);
+    encodeMessageInFile(inputFile, outputFile, &messageInfo);
 
     freeSecretMessageStruct(&messageInfo);
 
-    fclose(file_ptr);
     printf("\nSuccessfully hid message in %s!\n", outputFile);
+}
 
-    return 0;
+/**
+ * Handles the case where multiple files need to be used to hide a message
+ *
+ * @param argv original input parameters
+ */
+void mSwitch(int argc, char *argv[]) {
+    int num_files;
+    char *basename, *outputBasename, *readChar;
+    char outputPath[PATH_MAX], inputPath[PATH_MAX];
+    long conv;
+
+    if (argc != 5) {
+        usage();
+        errorAndExit("Incorrect number of parameters passed", NULL);
+    }
+
+    errno = 0;
+    conv = strtol(argv[2], &readChar, 10);
+
+    // Check for errors: e.g., the string does not represent an integer
+    // or the integer is larger than int
+    if (errno != 0 || *readChar != '\0' || conv > INT_MAX) {
+        errorAndExit("Incorrect parameters, second needs to be an int", NULL);
+    } else {
+        // No error
+        num_files = conv;
+    }
+
+    if (num_files < 0) {
+        errorAndExit("Must be at least 1 file to hide message in", NULL);
+    } else if (num_files > 1000) {
+        errorAndExit("Maximum number of files to hide in is 1000", NULL);
+    }
+
+    basename = argv[3];
+    outputBasename = argv[4];
+
+    for(int i=0; i<num_files; ++i) {
+
+        sprintf(inputPath, "%s-%03d.ppm", basename, i);
+        sprintf(outputPath, "%s-%03d.ppm", outputBasename, i);
+        printf("%s\n", inputPath);
+        printf("%s\n", outputPath);
+    }
+}
+
+/**
+ * Handles the case where parallel execution is used to hide the message
+ *
+ * @param argv original input parameters
+ */
+void pSwitch(int argc, char *argv[]) {
+    char *inputFile;
+
+    if (argc != 3) {
+        usage();
+        errorAndExit("Incorrect number of parameters passed", NULL);
+    }
+
+    inputFile = argv[2];
+    printf("%s", inputFile);
+}
+
+/**
+ * Handles the case where the before and after image are shown
+ *
+ * @param argv original input parameters
+ */
+void sSwitch(int argc, char *argv[]) {
+
+    if (argc != 4) {
+        usage();
+        errorAndExit("Incorrect number of parameters passed", NULL);
+    }
+
+    char *noSwitchParameters[] = { argv[0], argv[2], argv[3]};
+    printf("%s %s %s", noSwitchParameters[0],noSwitchParameters[1] ,noSwitchParameters[2]);
+    noSwitch(3, noSwitchParameters);
 }
 
 /**
@@ -68,54 +149,4 @@ int main(int argc, char *argv[]) {
 void usage() {
     printf("\nUsage\n");
     printf("./hide inputimage outputfile\n");
-}
-
-/**
- * Reads a set of characters from the standard in until an EOF/Ctrl+D is reached
- */
-char* readFromInput() {
-    char buffer[BUFF_SIZE];
-    size_t inputSize = 1; // includes NULL
-
-    /** Preallocate space.  We could just allocate one char here,
-    but that wouldn't be efficient. */
-    char *input = malloc(sizeof(char) * BUFF_SIZE);
-
-    if(input == NULL)
-    {
-        errorAndExit("Failed to allocate content", NULL);
-    } else
-    {
-        input[0] = '\0'; // make null-terminated
-    }
-
-    // Dunno why sometimes I need to use 3
-    printf("Input secret message press ctrl+D 1-3 times when finished\n");
-
-    // Keep reading a buffer sized amount of characters until EOF is reached
-    while(fgets(buffer, BUFF_SIZE, stdin))
-    {
-        char *old = input;
-        inputSize += strlen(buffer);
-
-        // We need more memory!
-        input = realloc(input, inputSize);
-
-        if(input == NULL)
-        {
-            free(old);
-            errorAndExit("Couldn't allocate anymore space for message", NULL);
-        }
-        strcat(input, buffer);
-    }
-
-    // Oh no!
-    if(ferror(stdin))
-    {
-        free(input);
-        errorAndExit("Error reading from stdin.", NULL);
-    }
-
-    //returns the pointer to the read in string
-    return input;
 }

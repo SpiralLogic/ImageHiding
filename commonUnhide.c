@@ -7,28 +7,53 @@
 #include <stdlib.h>
 
 #include "commonUnhide.h"
-
+#include "bmpCommon.h"
+#include "ppmCommon.h"
 /**
  * decodes a 24 bit image from a  file. A null terminator \0 marks the end of the encoded message
 */
-void decodeImage(FILE *file_ptr, struct ImageInfo *imageInfo) {
+void decodeImage(char* inputFile) {
     int messageChar = 0;
     int nextByte;
     int currentBit = 0;
+    struct ImageInfo *imageInfo_ptr;
+    struct ImageInfo imageInfo;
+    enum ImageType imageType;
+    FILE *inputfile_ptr;
 
-    fseek(file_ptr, imageInfo->pixelMapOffset, SEEK_SET);
-    printf("Decoded message:\n");
-    printf("#########################################\n");
+    inputfile_ptr = fopen(inputFile, "r");
 
-    while ((nextByte = fgetc(file_ptr)) != EOF)
+    if (inputfile_ptr == NULL) {
+        errorAndExit("Cannot open file", NULL);
+    }
+
+    // Work out input image information
+    imageType = getImageType(inputfile_ptr);
+
+    if (imageType == unsupported) {
+        errorAndExit("Image type unsupported", inputfile_ptr);
+    }
+
+    if (imageType == ppm) {
+        imageInfo = verifyAndGetPpmInfo(inputfile_ptr);
+    } else if (imageType == bmp) {
+        imageInfo = verifyAndGetBmpInfo(inputfile_ptr);
+    }
+
+    imageInfo_ptr = &imageInfo;
+    imageInfo_ptr->filename = inputFile;
+
+    // decode message in pixel map
+    fseek(inputfile_ptr, imageInfo_ptr->pixelMapOffset, SEEK_SET);
+
+    while ((nextByte = fgetc(inputfile_ptr)) != EOF)
     {
         // Left shift message character and decode the next bit
         messageChar <<= 1;
         messageChar |= nextByte & 0x01;
         if (currentBit == 7) {
             if (messageChar == '\0') {
-                printf("\n#########################################");
-                return;
+                break;
             }
             printf("%c", messageChar);
             currentBit = 0;
@@ -37,6 +62,6 @@ void decodeImage(FILE *file_ptr, struct ImageInfo *imageInfo) {
             currentBit++;
         }
     }
-    printf("\n#########################################");
-    errorAndExit("\nOh No! The end of the message was never reached!", file_ptr);
+
+    fclose(inputfile_ptr);
 }

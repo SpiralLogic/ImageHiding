@@ -10,6 +10,28 @@
 #include "ppmCommon.h"
 
 /**
+ * Get's the image information for a PPM image and verifies that
+ * A message can be in it
+ */
+struct ImageInfo verifyAndGetPpmInfo(FILE *file_ptr) {
+    struct ImageInfo imageInfo = getPpmImageInfo(file_ptr);
+
+    if (!imageInfo.successRead) {
+        errorAndExit(imageInfo.errorMesssage, file_ptr);
+    }
+
+#ifdef DEBUG
+    printImageInfo(&imageInfo);
+#endif
+
+    if (imageInfo.depth != PPM_COLOR_DEPTH) {
+        errorAndExit("Image depth not supported", file_ptr);
+    }
+
+    return imageInfo;
+}
+
+/**
  * Reads the information about a PPM image from the header
 */
 struct ImageInfo getPpmImageInfo(FILE *file_ptr) {

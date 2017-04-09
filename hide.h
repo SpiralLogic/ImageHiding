@@ -6,9 +6,11 @@
 #ifndef ASS1_HIDE_H_H
 #define ASS1_HIDE_H_H
 
-#define BUFF_SIZE 1024
-
+#define PATH_MAX 4096
 void usage();
-char* readFromInput();
+void mSwitch(int argc, char *argv[]);
+void pSwitch(int argc, char *argv[]);
+void sSwitch(int argc, char *argv[]);
+void noSwitch(int argc, char *argv[]);
 
 #endif //ASS1_HIDE_H_H

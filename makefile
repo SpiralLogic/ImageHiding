@@ -15,18 +15,27 @@ DEBUGGING = debug
 #################################
 # file lists
 #################################
-HIDEFILES = hide.c common.c commonHide.c ppmHide.c ppmCommon.c bmpHide.c bmpCommon.c
-UNHIDEFILES = unhide.c common.c commonUnhide.c ppmCommon.c ppmUnhide.c bmpUnhide.c bmpCommon.c
+HIDEFILES = hide.c common.c commonHide.c ppmCommon.c bmpCommon.c
+UNHIDEFILES = unhide.c common.c commonUnhide.c ppmCommon.c bmpCommon.c
 
 #################################
 # Each of the make builds
 #################################
 all: clean $(HIDE_PROGRAM) $(UNHIDE_PROGRAM)
 
-$(HIDE_PROGRAM): hide.c ppmHide.c common.c ppmCommon.c
+ppmCommon.o: ppmCommon.c
+	$(CC) $(CFLAGS) -c ppmCommon.c
+
+bmpCommon.o: bmpCommon.c
+	$(CC) $(CFLAGS) -c bmpCommon.c
+
+common.o: common.c
+	$(CC) $(CFLAGS) -c common.c
+
+$(HIDE_PROGRAM): ppmCommon.o bmpCommon.o common.o
 	$(CC) $(CFLAGS) -o $(HIDE_PROGRAM) $(HIDEFILES)
 
-$(UNHIDE_PROGRAM): unhide.c ppmUnhide.c common.c ppmCommon.c
+$(UNHIDE_PROGRAM): ppmCommon.o bmpCommon.o common.o
 	$(CC) $(CFLAGS) -o $(UNHIDE_PROGRAM) $(UNHIDEFILES)
 
 #################################
@@ -34,10 +43,10 @@ $(UNHIDE_PROGRAM): unhide.c ppmUnhide.c common.c ppmCommon.c
 #################################
 alldebug: clean $(HIDE_PROGRAM)$(DEBUGGING) $(UNHIDE_PROGRAM)$(DEBUGGING)
 
-$(HIDE_PROGRAM)$(DEBUGGING): hide.c ppmHide.c common.c ppmCommon.c
+$(HIDE_PROGRAM)$(DEBUGGING):
 	$(CC) $(CFLAGS) -DDEBUG -g -o $(HIDE_PROGRAM) $(HIDEFILES)
 
-$(UNHIDE_PROGRAM)$(DEBUGGING): unhide.c ppmUnhide.c common.c ppmCommon.c
+$(UNHIDE_PROGRAM)$(DEBUGGING):
 	$(CC) $(CFLAGS) -DDEBUG -g -o $(UNHIDE_PROGRAM) $(UNHIDEFILES)
 
 #################################

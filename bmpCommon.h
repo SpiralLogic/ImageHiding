@@ -11,5 +11,6 @@
 #include <stdio.h>
 
 struct ImageInfo getBmpImageInfo(FILE *file_ptr);
+struct ImageInfo verifyAndGetBmpInfo(FILE *file_ptr);
 
 #endif //ASS1_BMPCOMMON_H

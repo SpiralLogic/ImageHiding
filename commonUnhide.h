@@ -7,6 +7,6 @@
 
 #include "common.h"
 
-void decodeImage(FILE *file_ptr, struct ImageInfo *imageInfo);
+void decodeImage(char* inputFile);
 
 #endif //ASS1_COMMONUNHIDE_H

@@ -8,6 +8,28 @@
 #include "bmpCommon.h"
 
 /**
+ * Returns the information about a BMP file if the file is valid
+*/
+struct ImageInfo verifyAndGetBmpInfo(FILE *file_ptr) {
+    struct ImageInfo imageInfo = getBmpImageInfo(file_ptr);
+
+    if (!imageInfo.successRead) {
+        errorAndExit(imageInfo.errorMesssage, file_ptr);
+    }
+
+#ifdef DEBUG
+    printImageInfo(&imageInfo);
+#endif
+
+    if (imageInfo.depth != BMP_IMAGE_BITS) {
+        errorAndExit("Image must be 24 bit", file_ptr);
+    }
+
+    return imageInfo;
+};
+
+
+/**
  * Determines the image information of BMP file
 */
 struct ImageInfo getBmpImageInfo(FILE *file_ptr) {
