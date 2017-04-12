@@ -112,6 +112,10 @@ void mSwitch(int argc, char *argv[]) {
         printf("Output as: %s\n", outputPath);
         encodeMessageInFile(inputPath, outputPath, &messageInfo);
     }
+
+    if (messageInfo.currentPos < messageInfo.length) {
+        errorAndExit("Could not hide complete message in image", NULL);
+    }
 }
 
 /**

@@ -64,7 +64,6 @@ void encodeMessageInFile(char *inputFile, char *outputFile, MessageInfo *message
 
     // encode the message into the image and output it a byte at a time to the file
     for (size_t i = messageInfo->currentPos; i < messageInfo->length; i++) {
-        printf("%zu %zu %zu %zu\n", i, imageSize, messageInfo->currentPos, messageInfo->length);
         // Stop if no more of the message can be hidden in the image
         if ((i + 1 - messageInfo->currentPos) * 8 >= imageSize && messageInfo->hideMode == multiple) {
             messageInfo->currentPos = i;
@@ -74,7 +73,6 @@ void encodeMessageInFile(char *inputFile, char *outputFile, MessageInfo *message
         }
 
         nextByte = messageInfo->message[i];
-        printf("hiding %c\n", nextByte);
         encodeByteToOutput(nextByte, inputFile_ptr, outfile_ptr, outputFile, messageInfo);
     }
 
