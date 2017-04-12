@@ -19,34 +19,34 @@ void decodeImage(char* inputFile) {
     struct ImageInfo *imageInfo_ptr;
     struct ImageInfo imageInfo;
     enum ImageType imageType;
-    FILE *inputfile_ptr;
+    FILE *inputFile_ptr;
 
-    inputfile_ptr = fopen(inputFile, "r");
+    inputFile_ptr = fopen(inputFile, "r");
 
-    if (inputfile_ptr == NULL) {
+    if (inputFile_ptr == NULL) {
         errorAndExit("Cannot open file", NULL);
     }
 
     // Work out input image information
-    imageType = getImageType(inputfile_ptr);
+    imageType = getImageType(inputFile_ptr);
 
     if (imageType == unsupported) {
-        errorAndExit("Image type unsupported", inputfile_ptr);
+        errorAndExit("Image type unsupported", inputFile_ptr);
     }
 
     if (imageType == ppm) {
-        imageInfo = verifyAndGetPpmInfo(inputfile_ptr);
+        imageInfo = verifyAndGetPpmInfo(inputFile_ptr);
     } else if (imageType == bmp) {
-        imageInfo = verifyAndGetBmpInfo(inputfile_ptr);
+        imageInfo = verifyAndGetBmpInfo(inputFile_ptr);
     }
 
     imageInfo_ptr = &imageInfo;
     imageInfo_ptr->filename = inputFile;
 
     // decode message in pixel map
-    fseek(inputfile_ptr, imageInfo_ptr->pixelMapOffset, SEEK_SET);
+    fseek(inputFile_ptr, imageInfo_ptr->pixelMapOffset, SEEK_SET);
 
-    while ((nextByte = fgetc(inputfile_ptr)) != EOF)
+    while ((nextByte = fgetc(inputFile_ptr)) != EOF)
     {
         // Left shift message character and decode the next bit
         messageChar <<= 1;
@@ -63,5 +63,5 @@ void decodeImage(char* inputFile) {
         }
     }
 
-    fclose(inputfile_ptr);
+    fclose(inputFile_ptr);
 }

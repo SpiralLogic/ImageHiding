@@ -13,72 +13,80 @@
  * Each RGB colour in a pixel will store 1 bit of the message in it's least significant bit
  */
 void encodeMessageInFile(char *inputFile, char *outputFile, MessageInfo *messageInfo) {
-    // Start with 1 byte for null terminator
-    size_t imageSize;
-    FILE *outfile_ptr, *inputfile_ptr;
+    FILE *outfile_ptr, *inputFile_ptr;
     enum ImageType imageType;
     struct ImageInfo *imageInfo_ptr;
     struct ImageInfo imageInfo;
     int nextByte;
 
-    inputfile_ptr = fopen(inputFile, "r");
+    inputFile_ptr = fopen(inputFile, "r");
 
-    if (inputfile_ptr == NULL) {
+    if (inputFile_ptr == NULL) {
         errorAndExit("Cannot open file", NULL);
     }
 
     // Work out input image information
-    imageType = getImageType(inputfile_ptr);
+    imageType = getImageType(inputFile_ptr);
     if (imageType == unsupported) {
-        errorAndExit("Image type unsupported", inputfile_ptr);
+        errorAndExit("Image type unsupported", inputFile_ptr);
     }
 
     if (imageType == ppm) {
-        imageInfo = verifyAndGetPpmInfo(inputfile_ptr);
+        imageInfo = verifyAndGetPpmInfo(inputFile_ptr);
     } else if (imageType == bmp) {
-        imageInfo = verifyAndGetBmpInfo(inputfile_ptr);
+        imageInfo = verifyAndGetBmpInfo(inputFile_ptr);
     }
 
     imageInfo_ptr = &imageInfo;
     imageInfo_ptr->filename = inputFile;
 
-    imageSize = imageInfo_ptr->height * imageInfo_ptr->width * 3;
+    size_t imageSize = imageInfo_ptr->height * imageInfo_ptr->width * 3;
 
     // Remove output file if it exists and attempted to output
     remove(outputFile);
     outfile_ptr = fopen(outputFile, "w+");
 
     if (outfile_ptr == NULL) {
-        errorAndExit("Cannot open output file", inputfile_ptr);
+        errorAndExit("Cannot open output file", inputFile_ptr);
     }
 
-    copyHeader(inputfile_ptr, outfile_ptr, imageInfo_ptr);
+    copyHeader(inputFile_ptr, outfile_ptr, imageInfo_ptr);
 
     //Set to the start of the pixel map
-    fseek(inputfile_ptr, imageInfo_ptr->pixelMapOffset, SEEK_SET);
+    fseek(inputFile_ptr, imageInfo_ptr->pixelMapOffset, SEEK_SET);
 
-    if (messageInfo->length * 8 > imageSize) {
+    if (messageInfo->hideMode == single && messageInfo->length * 8 > imageSize) {
         fclose(outfile_ptr);
         remove(outputFile);
         freeSecretMessageStruct(messageInfo);
-        errorAndExit("Message too big for image", inputfile_ptr);
+        errorAndExit("Message too big for image", inputFile_ptr);
     }
 
     // encode the message into the image and output it a byte at a time to the file
     for (size_t i = messageInfo->currentPos; i < messageInfo->length; i++) {
+        printf("%zu %zu %zu %zu\n", i, imageSize, messageInfo->currentPos, messageInfo->length);
+        // Stop if no more of the message can be hidden in the image
+        if ((i + 1 - messageInfo->currentPos) * 8 >= imageSize && messageInfo->hideMode == multiple) {
+            messageInfo->currentPos = i;
+            fclose(inputFile_ptr);
+            fclose(outfile_ptr);
+            return;
+        }
+
         nextByte = messageInfo->message[i];
-        encodeByteToOutput(nextByte, inputfile_ptr, outfile_ptr, outputFile, messageInfo);
+        printf("hiding %c\n", nextByte);
+        encodeByteToOutput(nextByte, inputFile_ptr, outfile_ptr, outputFile, messageInfo);
     }
 
-    // Add null terminator
-    encodeByteToOutput('\0', inputfile_ptr, outfile_ptr, outputFile, NULL);
+    // finished hiding message in images so just copy over pixel maps for remaining images
+    messageInfo->currentPos = messageInfo->length;
 
     // Write the remaining image to the output file
-    while ((nextByte = fgetc(inputfile_ptr)) != EOF) {
+    while ((nextByte = fgetc(inputFile_ptr)) != EOF) {
         fputc(nextByte, outfile_ptr);
     }
 
-    fclose(inputfile_ptr);
+    fclose(inputFile_ptr);
     fclose(outfile_ptr);
 }
 
@@ -145,12 +153,10 @@ MessageInfo createSecretMessageStruct(char *message) {
  */
 void freeSecretMessageStruct(MessageInfo *messageInfo) {
     if (messageInfo != NULL) {
-
         if (messageInfo->message != NULL) {
             free(messageInfo->message);
             messageInfo->message = NULL;
         }
-
         messageInfo = NULL;
     }
 }

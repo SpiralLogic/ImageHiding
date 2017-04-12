@@ -55,6 +55,7 @@ void noSwitch(int argc, char *argv[]) {
     outputFile = argv[2];
 
     MessageInfo messageInfo = createSecretMessageStruct(readFromInput());
+    messageInfo.hideMode = single;
 
     encodeMessageInFile(inputFile, outputFile, &messageInfo);
 
@@ -100,12 +101,16 @@ void mSwitch(int argc, char *argv[]) {
     basename = argv[3];
     outputBasename = argv[4];
 
-    for(int i=0; i<num_files; ++i) {
+    MessageInfo messageInfo = createSecretMessageStruct(readFromInput());
+    messageInfo.hideMode = multiple;
 
+    for(int i=0; i<num_files; ++i) {
         sprintf(inputPath, "%s-%03d.ppm", basename, i);
         sprintf(outputPath, "%s-%03d.ppm", outputBasename, i);
-        printf("%s\n", inputPath);
-        printf("%s\n", outputPath);
+
+        printf("Hiding into: %s\n", inputPath);
+        printf("Output as: %s\n", outputPath);
+        encodeMessageInFile(inputPath, outputPath, &messageInfo);
     }
 }
 

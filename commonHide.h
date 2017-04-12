@@ -13,10 +13,8 @@
 #include "common.h"
 
 enum HideMode {
-  multiFiles,
-  parallel,
-  directory,
-  beforeAndAfter
+  single,
+  multiple
 };
 
 typedef struct {
