@@ -10,19 +10,16 @@
 /**
  * Returns the information about a BMP file if the file is valid
 */
-struct ImageInfo verifyAndGetBmpInfo(FILE *file_ptr) {
-    struct ImageInfo imageInfo = getBmpImageInfo(file_ptr);
-
-    if (!imageInfo.successRead) {
-        errorAndExit(imageInfo.errorMesssage, file_ptr);
-    }
+ImageInfo verifyAndGetBmpInfo(FILE *file_ptr) {
+    ImageInfo imageInfo = getBmpImageInfo(file_ptr);
 
 #ifdef DEBUG
     printImageInfo(&imageInfo);
 #endif
 
     if (imageInfo.depth != BMP_IMAGE_BITS) {
-        errorAndExit("Image must be 24 bit", file_ptr);
+        imageInfo.errorMesssage = "Image depth not supported";
+        imageInfo.successRead = false;
     }
 
     return imageInfo;
@@ -32,8 +29,8 @@ struct ImageInfo verifyAndGetBmpInfo(FILE *file_ptr) {
 /**
  * Determines the image information of BMP file
 */
-struct ImageInfo getBmpImageInfo(FILE *file_ptr) {
-    struct ImageInfo imageInfo = {.type = bmp, .height = 0, .width =0, .depth = 0, .pixelMapOffset = 0, .successRead = false};
+ImageInfo getBmpImageInfo(FILE *file_ptr) {
+    ImageInfo imageInfo = {.type = bmp, .height = 0, .width =0, .depth = 0, .pixelMapOffset = 0, .successRead = false};
 
     // Get the furthest piece of information first so that we can test to make sure
     // all of the header is going to be there

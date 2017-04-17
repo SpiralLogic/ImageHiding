@@ -22,7 +22,7 @@ enum ImageType {
  * If the header can't be read successfully an error message is stored
  * so that it can be displayed to the user.
  */
-struct ImageInfo {
+typedef struct {
   enum ImageType type;
   char *filename;
   int width;
@@ -31,12 +31,12 @@ struct ImageInfo {
   long pixelMapOffset;
   bool successRead;
   char *errorMesssage;
-};
+} ImageInfo;
 
 enum ImageType getImageType(FILE *file_ptr);
 void errorAndExit(char *error, FILE *file_ptr);
 void messageAndExit(char *message, FILE *file_ptr);
-void printImageInfo(struct ImageInfo *imageInfo);
+void printImageInfo(ImageInfo *imageInfo);
 
 #ifdef DEBUG
 void printByteBits(int byte);

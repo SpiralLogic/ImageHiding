@@ -57,7 +57,7 @@ void messageAndExit(char *message, FILE *file_ptr) {
 /**
 * Prints the information about an image
 */
-void printImageInfo(struct ImageInfo *imageInfo) {
+void printImageInfo(ImageInfo *imageInfo) {
     printf("width %d\n", (*imageInfo).width);
     printf("height %d\n", (*imageInfo).height);
     printf("depth %d\n", (*imageInfo).depth);

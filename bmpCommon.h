@@ -8,9 +8,9 @@
 // The bit depth BMP encoding supports
 #define BMP_IMAGE_BITS 24
 
-#include <stdio.h>
+#include "common.h"
 
-struct ImageInfo getBmpImageInfo(FILE *file_ptr);
-struct ImageInfo verifyAndGetBmpInfo(FILE *file_ptr);
+ImageInfo getBmpImageInfo(FILE *file_ptr);
+ImageInfo verifyAndGetBmpInfo(FILE *file_ptr);
 
 #endif //ASS1_BMPCOMMON_H

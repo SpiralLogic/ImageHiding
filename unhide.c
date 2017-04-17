@@ -15,6 +15,10 @@
  * correct decode function to decode the message from the image file.
 */
 int main(int argc, char *argv[]) {
+    if (argc == 1) {
+        usage();
+        return 1;
+    }
     if (strcmp(argv[1], "-m") == 0) {
         mSwitch(argc, argv);
     } else {
@@ -22,10 +26,7 @@ int main(int argc, char *argv[]) {
     }
 
     return 0;
-
 }
-
-
 
 /**
  * Handles the case where no switches are given

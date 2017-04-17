@@ -6,7 +6,10 @@
 #ifndef ASS1_HIDE_H_H
 #define ASS1_HIDE_H_H
 
+#ifndef PATH_MAX
 #define PATH_MAX 4096
+#endif
+
 void usage();
 void mSwitch(int argc, char *argv[]);
 void pSwitch(int argc, char *argv[]);

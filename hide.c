@@ -12,6 +12,7 @@
 
 #include "common.h"
 #include "commonHide.h"
+#include "compareImages.h"
 #include "bmpCommon.h"
 #include "ppmCommon.h"
 #include "hide.h"
@@ -21,7 +22,10 @@
  * correct encode function to encode the message into the image file.
 */
 int main(int argc, char *argv[]) {
-
+    if (argc == 1) {
+        usage();
+        return 1;
+    }
     if (strcmp(argv[1], "-m") == 0) {
         mSwitch(argc, argv);
     }
@@ -54,12 +58,12 @@ void noSwitch(int argc, char *argv[]) {
     inputFile = argv[1];
     outputFile = argv[2];
 
-    MessageInfo messageInfo = createSecretMessageStruct(readFromInput());
-    messageInfo.hideMode = single;
+    MessageInfo *messageInfo = readFromInput();
+    messageInfo->hideMode = single;
 
-    encodeMessageInFile(inputFile, outputFile, &messageInfo);
+    encodeMessageInFile(inputFile, outputFile, messageInfo);
 
-    freeSecretMessageStruct(&messageInfo);
+    freeSecretMessageStruct(messageInfo);
 
     printf("\nSuccessfully hid message in %s!\n", outputFile);
 }
@@ -70,10 +74,11 @@ void noSwitch(int argc, char *argv[]) {
  * @param argv original input parameters
  */
 void mSwitch(int argc, char *argv[]) {
-    int num_files;
+    int num_files = 0;
     char *basename, *outputBasename, *readChar;
     char outputPath[PATH_MAX], inputPath[PATH_MAX];
     long conv;
+    MessageInfo *messageInfo;
 
     if (argc != 5) {
         usage();
@@ -101,8 +106,8 @@ void mSwitch(int argc, char *argv[]) {
     basename = argv[3];
     outputBasename = argv[4];
 
-    MessageInfo messageInfo = createSecretMessageStruct(readFromInput());
-    messageInfo.hideMode = multiple;
+    messageInfo = readFromInput();
+    messageInfo->hideMode = multiple;
 
     for(int i=0; i<num_files; ++i) {
         sprintf(inputPath, "%s-%03d.ppm", basename, i);
@@ -110,10 +115,10 @@ void mSwitch(int argc, char *argv[]) {
 
         printf("Hiding into: %s\n", inputPath);
         printf("Output as: %s\n", outputPath);
-        encodeMessageInFile(inputPath, outputPath, &messageInfo);
+        encodeMessageInFile(inputPath, outputPath, messageInfo);
     }
 
-    if (messageInfo.currentPos < messageInfo.length) {
+    if (messageInfo->currentPos < messageInfo->length) {
         errorAndExit("Could not hide complete message in image", NULL);
     }
 }
@@ -138,24 +143,40 @@ void pSwitch(int argc, char *argv[]) {
 /**
  * Handles the case where the before and after image are shown
  *
+ * @param argc original argument count
  * @param argv original input parameters
  */
 void sSwitch(int argc, char *argv[]) {
+    char *inputFile;
+    char *outputFile;
+    MessageInfo *messageInfo;
 
     if (argc != 4) {
         usage();
         errorAndExit("Incorrect number of parameters passed", NULL);
     }
 
-    char *noSwitchParameters[] = { argv[0], argv[2], argv[3]};
-    printf("%s %s %s", noSwitchParameters[0],noSwitchParameters[1] ,noSwitchParameters[2]);
-    noSwitch(3, noSwitchParameters);
+    inputFile = argv[2];
+    outputFile = argv[3];
+
+    messageInfo = readFromInput();
+    messageInfo->hideMode = single;
+
+    encodeMessageInFile(inputFile, outputFile, messageInfo);
+    freeSecretMessageStruct(messageInfo);
+
+    printf("\nSuccessfully hid message in %s!\n", outputFile);
+
+    compareImages(inputFile, inputFile);
 }
 
 /**
- * displays the use for this command
+ * displays the use for this executable
 */
 void usage() {
     printf("\nUsage\n");
     printf("./hide inputimage outputfile\n");
+    printf("./hide -m numfiles base outputbase\n");
+    printf("./hide -s inputimage outputfile\n");
+    printf("./hide -p input file\n");
 }

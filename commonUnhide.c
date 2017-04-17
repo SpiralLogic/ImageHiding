@@ -13,11 +13,11 @@
  * decodes a 24 bit image from a  file. A null terminator \0 marks the end of the encoded message
 */
 void decodeImage(char* inputFile) {
-    int messageChar = 0;
+    char messageChar = (char) '\0';
     int nextByte;
     int currentBit = 0;
-    struct ImageInfo *imageInfo_ptr;
-    struct ImageInfo imageInfo;
+    ImageInfo *imageInfo_ptr;
+    ImageInfo imageInfo;
     enum ImageType imageType;
     FILE *inputFile_ptr;
 
@@ -40,24 +40,27 @@ void decodeImage(char* inputFile) {
         imageInfo = verifyAndGetBmpInfo(inputFile_ptr);
     }
 
+    if (!imageInfo.successRead) {
+        errorAndExit(imageInfo.errorMesssage, inputFile_ptr);
+    }
+
     imageInfo_ptr = &imageInfo;
     imageInfo_ptr->filename = inputFile;
 
     // decode message in pixel map
     fseek(inputFile_ptr, imageInfo_ptr->pixelMapOffset, SEEK_SET);
-
     while ((nextByte = fgetc(inputFile_ptr)) != EOF)
     {
         // Left shift message character and decode the next bit
         messageChar <<= 1;
         messageChar |= nextByte & 0x01;
         if (currentBit == 7) {
-            if (messageChar == '\0') {
-                break;
+            if (messageChar == EOF) {
+              //printf("%d", messageChar);
             }
             printf("%c", messageChar);
             currentBit = 0;
-            messageChar = 0;
+            messageChar = (char) '\0';
         } else {
             currentBit++;
         }

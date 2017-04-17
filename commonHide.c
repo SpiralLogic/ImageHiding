@@ -5,29 +5,38 @@
 */
 #include <memory.h>
 #include <stdlib.h>
+
 #include "commonHide.h"
 #include "ppmCommon.h"
 #include "bmpCommon.h"
+
 /**
  * Encodes a message into a 24 bit pixel map
  * Each RGB colour in a pixel will store 1 bit of the message in it's least significant bit
+ *
+ * @param inputFile filename string
+ * @param outputFile filename string
+ * @param messageInfo secret message info struct
  */
 void encodeMessageInFile(char *inputFile, char *outputFile, MessageInfo *messageInfo) {
     FILE *outfile_ptr, *inputFile_ptr;
     enum ImageType imageType;
-    struct ImageInfo *imageInfo_ptr;
-    struct ImageInfo imageInfo;
+    ImageInfo *imageInfo_ptr;
+    ImageInfo imageInfo;
     int nextByte;
 
     inputFile_ptr = fopen(inputFile, "r");
 
     if (inputFile_ptr == NULL) {
+        freeSecretMessageStruct(messageInfo);
         errorAndExit("Cannot open file", NULL);
     }
 
     // Work out input image information
     imageType = getImageType(inputFile_ptr);
+
     if (imageType == unsupported) {
+        freeSecretMessageStruct(messageInfo);
         errorAndExit("Image type unsupported", inputFile_ptr);
     }
 
@@ -35,6 +44,11 @@ void encodeMessageInFile(char *inputFile, char *outputFile, MessageInfo *message
         imageInfo = verifyAndGetPpmInfo(inputFile_ptr);
     } else if (imageType == bmp) {
         imageInfo = verifyAndGetBmpInfo(inputFile_ptr);
+    }
+
+    if (!imageInfo.successRead) {
+        freeSecretMessageStruct(messageInfo);
+        errorAndExit(imageInfo.errorMesssage, inputFile_ptr);
     }
 
     imageInfo_ptr = &imageInfo;
@@ -47,13 +61,14 @@ void encodeMessageInFile(char *inputFile, char *outputFile, MessageInfo *message
     outfile_ptr = fopen(outputFile, "w+");
 
     if (outfile_ptr == NULL) {
+        freeSecretMessageStruct(messageInfo);
         errorAndExit("Cannot open output file", inputFile_ptr);
     }
 
     copyHeader(inputFile_ptr, outfile_ptr, imageInfo_ptr);
 
     //Set to the start of the pixel map
-    fseek(inputFile_ptr, imageInfo_ptr->pixelMapOffset, SEEK_SET);
+    fseek(inputFile_ptr, imageInfo_ptr->pixelMapOffset, SEEK_SET - 1);
 
     if (messageInfo->hideMode == single && messageInfo->length * 8 > imageSize) {
         fclose(outfile_ptr);
@@ -89,12 +104,16 @@ void encodeMessageInFile(char *inputFile, char *outputFile, MessageInfo *message
 }
 
 /**
- * takes in one byte, encodes that byte into the next 8 bytes of the input file and writes
- * it to the output file
-*/
+ * Encodes one byte to the output file
+ *
+ * @param byte          byte to be hidden
+ * @param file_ptr      pointer of file to hide into
+ * @param outfile_ptr   pointer of output file
+ * @param outputFile    output file name in case an error happens and it needs to be removed
+ * @param messageInfo   information about the message
+ */
 void encodeByteToOutput(int byte, FILE *file_ptr, FILE *outfile_ptr, char *outputFile, MessageInfo *messageInfo) {
     int messageBit, nextByte;
-
     for (int i = 0; i < 8; i++) {
         // Stores the next message bit to encode
         messageBit = ((byte) << i & 0x80) / 0x80;
@@ -120,9 +139,14 @@ void encodeByteToOutput(int byte, FILE *file_ptr, FILE *outfile_ptr, char *outpu
 }
 
 /**
+ *
  * Copies the header from the input image to the output image.
-*/
-void copyHeader(FILE *file_ptr, FILE *outfile_ptr, struct ImageInfo *imageInfo_ptr) {
+ *
+ * @param file_ptr          input file pointer
+ * @param outfile_ptr       output file pointer
+ * @param imageInfo_ptr     header information of image
+ */
+void copyHeader(FILE *file_ptr, FILE *outfile_ptr, ImageInfo *imageInfo_ptr) {
     int nextByte;
     long charsCopied = 0;
 
@@ -135,19 +159,21 @@ void copyHeader(FILE *file_ptr, FILE *outfile_ptr, struct ImageInfo *imageInfo_p
     }
 }
 
-
 /**
  * Set's the current secret message
+ *
  * @param message pointer
  */
 MessageInfo createSecretMessageStruct(char *message) {
-    MessageInfo messageInfo = { .message = message, .currentPos = 0, .length = strlen(message) };
+    MessageInfo messageInfo = {.message = message, .currentPos = 0, .length = strlen(message)};
 
     return messageInfo;
 }
 
 /**
  * Frees the memory allocated to the secret message
+ *
+ * @param messageInfo struct of message info
  */
 void freeSecretMessageStruct(MessageInfo *messageInfo) {
     if (messageInfo != NULL) {
@@ -155,58 +181,58 @@ void freeSecretMessageStruct(MessageInfo *messageInfo) {
             free(messageInfo->message);
             messageInfo->message = NULL;
         }
+        free(messageInfo);
         messageInfo = NULL;
     }
 }
 
-
-
 /**
  * Reads a set of characters from the standard in until an EOF/Ctrl+D is reached
  */
-char* readFromInput() {
-    char buffer[BUFF_SIZE];
-    size_t inputSize = 1; // includes NULL
-
-    /** Preallocate space.  We could just allocate one char here,
-    but that wouldn't be efficient. */
+MessageInfo *readFromInput() {
+    char nextChar;
     char *input = malloc(sizeof(char) * BUFF_SIZE);
+    size_t inputSize = 0;
+    MessageInfo *messageInfo = malloc(sizeof(*messageInfo));
 
-    if(input == NULL)
-    {
+    if (input == NULL) {
         errorAndExit("Failed to allocate content", NULL);
-    } else
-    {
-        input[0] = '\0'; // make null-terminated
     }
 
     // Dunno why sometimes I need to use 3
     printf("Input secret message press ctrl+D 1-3 times when finished\n");
 
     // Keep reading a buffer sized amount of characters until EOF is reached
-    while(fgets(buffer, BUFF_SIZE, stdin))
-    {
-        char *old = input;
-        inputSize += strlen(buffer);
+    while (1) {
+        nextChar = fgetc(stdin);
+        if (feof(stdin)) {
+            break;
+        }
 
+        if (ferror(stdin)) {
+            free(input);
+            errorAndExit("Error reading from stdin.", NULL);
+        }
+
+        inputSize++;
+
+        if (inputSize % BUFF_SIZE == 0) {
+            input = realloc(input, inputSize + BUFF_SIZE);
+        }
         // We need more memory!
-        input = realloc(input, inputSize);
-
-        if(input == NULL)
-        {
-            free(old);
+        if (input == NULL) {
             errorAndExit("Couldn't allocate anymore space for message", NULL);
         }
-        strcat(input, buffer);
+
+        input[inputSize - 1] = nextChar;
     }
 
-    // Oh no!
-    if(ferror(stdin))
-    {
-        free(input);
-        errorAndExit("Error reading from stdin.", NULL);
-    }
+    input = realloc(input, inputSize + 1);
+
+    input[inputSize] = EOF;
 
     //returns the pointer to the read in string
-    return input;
+    *messageInfo = (MessageInfo) {.message = input, .currentPos = 0, .length = inputSize + 1};
+
+    return messageInfo;
 }

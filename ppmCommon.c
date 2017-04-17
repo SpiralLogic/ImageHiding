@@ -12,20 +12,19 @@
 /**
  * Get's the image information for a PPM image and verifies that
  * A message can be in it
+ *
+ * @param file pointer
  */
-struct ImageInfo verifyAndGetPpmInfo(FILE *file_ptr) {
-    struct ImageInfo imageInfo = getPpmImageInfo(file_ptr);
-
-    if (!imageInfo.successRead) {
-        errorAndExit(imageInfo.errorMesssage, file_ptr);
-    }
+ImageInfo verifyAndGetPpmInfo(FILE *file_ptr) {
+    ImageInfo imageInfo = getPpmImageInfo(file_ptr);
 
 #ifdef DEBUG
     printImageInfo(&imageInfo);
 #endif
 
     if (imageInfo.depth != PPM_COLOR_DEPTH) {
-        errorAndExit("Image depth not supported", file_ptr);
+        imageInfo.errorMesssage = "Image depth not supported";
+        imageInfo.successRead = false;
     }
 
     return imageInfo;
@@ -33,9 +32,11 @@ struct ImageInfo verifyAndGetPpmInfo(FILE *file_ptr) {
 
 /**
  * Reads the information about a PPM image from the header
+ *
+ * @param file_ptr file pointer
 */
-struct ImageInfo getPpmImageInfo(FILE *file_ptr) {
-    struct ImageInfo imageInfo = {.type = ppm, .height = 0, .width =0, .depth = 0, .pixelMapOffset = 0, .successRead = false};
+ImageInfo getPpmImageInfo(FILE *file_ptr) {
+    ImageInfo imageInfo = {.type = ppm, .height = 0, .width =0, .depth = 0, .pixelMapOffset = 0, .successRead = false};
     bool headerComplete = false;
     int nextChar;
     int currentDimension = 0;
@@ -104,6 +105,8 @@ struct ImageInfo getPpmImageInfo(FILE *file_ptr) {
 
 /**
  * Scans a dimension from the image file and return -1 if none was found
+ *
+ * @param file pointer
 */
 int scanDimension(FILE *file_ptr) {
     int dimension;
@@ -116,6 +119,8 @@ int scanDimension(FILE *file_ptr) {
 
 /**
  * Moves to the next line of the file
+ *
+ * @param file_ptr file pointer
 */
 bool moveFileToNextLine(FILE *file_ptr) {
     int nextChar;
