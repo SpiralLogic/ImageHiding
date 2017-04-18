@@ -9,6 +9,7 @@
 #include <ctype.h>
 #include <errno.h>
 #include <limits.h>
+#include <unistd.h>
 
 #include "common.h"
 #include "commonHide.h"
@@ -28,12 +29,12 @@ int main(int argc, char *argv[]) {
     }
     if (strcmp(argv[1], "-m") == 0) {
         mSwitch(argc, argv);
-    }
-    else if (strcmp(argv[1], "-p") == 0) {
+    } else if (strcmp(argv[1], "-p") == 0) {
         pSwitch(argc, argv);
-    }
-    else if (strcmp(argv[1], "-s") == 0) {
+    } else if (strcmp(argv[1], "-s") == 0) {
         sSwitch(argc, argv);
+    } else if (strcmp(argv[1], "-f") == 0) {
+        fSwitch(argc, argv);
     } else {
         noSwitch(argc, argv);
     }
@@ -49,6 +50,7 @@ int main(int argc, char *argv[]) {
 void noSwitch(int argc, char *argv[]) {
     char *inputFile;
     char *outputFile;
+    MessageInfo *messageInfo;
 
     if (argc != 3) {
         usage();
@@ -58,7 +60,10 @@ void noSwitch(int argc, char *argv[]) {
     inputFile = argv[1];
     outputFile = argv[2];
 
-    MessageInfo *messageInfo = readFromInput();
+    // Dunno why sometimes I need to use 3
+    printf("Input secret message press ctrl+D 1-3 times when finished\n");
+
+    messageInfo = readFromInput();
     messageInfo->hideMode = single;
 
     encodeMessageInFile(inputFile, outputFile, messageInfo);
@@ -93,7 +98,6 @@ void mSwitch(int argc, char *argv[]) {
     if (errno != 0 || *readChar != '\0' || conv > INT_MAX) {
         errorAndExit("Incorrect parameters, second needs to be an int", NULL);
     } else {
-        // No error
         num_files = conv;
     }
 
@@ -130,6 +134,8 @@ void mSwitch(int argc, char *argv[]) {
  */
 void pSwitch(int argc, char *argv[]) {
     char *inputFile;
+    FILE *inputFile_ptr;
+    char textFile[PATH_MAX], inputImage[PATH_MAX], outputImage[PATH_MAX];
 
     if (argc != 3) {
         usage();
@@ -137,7 +143,34 @@ void pSwitch(int argc, char *argv[]) {
     }
 
     inputFile = argv[2];
-    printf("%s", inputFile);
+    inputFile_ptr = fopen(inputFile, "r");
+
+    if (inputFile_ptr == NULL) {
+        errorAndExit("Could not open input text file", NULL);
+    }
+
+    while (fscanf(inputFile_ptr, "%s %s %s", textFile, inputImage, outputImage) == 3) {
+
+        pid_t pid = fork();
+
+        if (pid == -1) {
+            errorAndExit("Couldn't fork", inputFile_ptr);
+        }
+
+        if (pid == 0) {
+            char *arguments[5] = { argv[0], "-f", textFile, inputImage, outputImage };
+            int returnint = execv(arguments[0], arguments);
+            printf("%d\n", returnint);
+            exit(0);
+        }
+    }
+    if (ferror(inputFile_ptr)) {
+        errorAndExit("Error reading input file", inputFile_ptr);
+    }
+
+    fclose(inputFile_ptr);
+    printf("\n Finished encoding into images\n");
+    exit(0);
 }
 
 /**
@@ -159,6 +192,9 @@ void sSwitch(int argc, char *argv[]) {
     inputFile = argv[2];
     outputFile = argv[3];
 
+    // Dunno why sometimes I need to use 3
+    printf("Input secret message press ctrl+D 1-3 times when finished\n");
+
     messageInfo = readFromInput();
     messageInfo->hideMode = single;
 
@@ -167,7 +203,48 @@ void sSwitch(int argc, char *argv[]) {
 
     printf("\nSuccessfully hid message in %s!\n", outputFile);
 
-    compareImages(inputFile, inputFile);
+    compareImages(inputFile, outputFile);
+}
+
+/**
+ * Used for parallel processing. Allows a message to be read from a file instead of stdin
+ *
+ * @param argc original argument count
+ * @param argv original input parameters
+ */
+void fSwitch(int argc, char *argv[]) {
+    char *messageFile;
+    char *inputFile;
+    char *outputFile;
+    MessageInfo *messageInfo;
+    FILE* messageFile_ptr;
+
+    if (argc != 5) {
+        usage();
+        errorAndExit("Incorrect number of parameters passed", NULL);
+    }
+
+    messageFile = argv[2];
+    inputFile = argv[3];
+    outputFile = argv[4];
+
+    messageFile_ptr = fopen(messageFile, "r");
+
+    if (messageFile_ptr == NULL) {
+        errorAndExit("Could not open input text file", NULL);
+    }
+
+    dup2(fileno(messageFile_ptr), STDIN_FILENO);
+
+    messageInfo = readFromInput();
+    messageInfo->hideMode = single;
+
+    fclose(messageFile_ptr);
+
+    encodeMessageInFile(inputFile, outputFile, messageInfo);
+    freeSecretMessageStruct(messageInfo);
+
+    printf("\nSuccessfully hid message in %s!\n", outputFile);
 }
 
 /**

@@ -11,6 +11,7 @@
 #endif
 
 void usage();
+void fSwitch(int argc, char *argv[]);
 void mSwitch(int argc, char *argv[]);
 void pSwitch(int argc, char *argv[]);
 void sSwitch(int argc, char *argv[]);

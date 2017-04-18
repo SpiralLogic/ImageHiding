@@ -56,7 +56,7 @@ void decodeImage(char* inputFile) {
         messageChar |= nextByte & 0x01;
         if (currentBit == 7) {
             if (messageChar == EOF) {
-              //printf("%d", messageChar);
+              break;
             }
             printf("%c", messageChar);
             currentBit = 0;

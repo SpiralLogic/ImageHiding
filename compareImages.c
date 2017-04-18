@@ -15,10 +15,6 @@
 #include "commonHide.h"
 #include "common.h"
 
-/* Setting up screen size*/
-const int SCREEN_WIDTH = 640;
-const int SCREEN_HEIGHT = 480;
-
 /**
  * Compares 2 images by displaying them on the screen with SDL
  *
@@ -89,17 +85,17 @@ void compareImages(char *image1, char *image2) {
     imageInfo2_ptr = &imageInfo2;
     imageInfo2_ptr->filename = image2;
 
-
     /* Initialize SDL */
     if (SDL_Init(SDL_INIT_VIDEO) < 0) {
         errorAndExit("SDL could not initialize!", image1_ptr);
     } else {
+        // Surface width will be the size of the images on top of each other
         int surfaceHeight = imageInfo1_ptr->height + imageInfo2_ptr->height;
         int surfaceWidth = imageInfo1_ptr->width > imageInfo2_ptr->width ?
                            imageInfo1_ptr->width : imageInfo2_ptr->width;
 
         /* Create the window */
-        window = SDL_CreateWindow("Hello Window",
+        window = SDL_CreateWindow("Image Comparison: Original Top / Encoded Bottom",
                                   SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
                                   surfaceWidth,
                                   surfaceHeight,
@@ -111,15 +107,13 @@ void compareImages(char *image1, char *image2) {
             /* Get screen surface */
             screenSurface = SDL_GetWindowSurface(window);
 
-            /* Fill surface with white */
-          //  SDL_FillRect(screenSurface, NULL, SDL_MapRGB(screenSurface->format, 0xff, 0xff, 0xff));
-
-            drawImage(screenSurface, image1_ptr, imageInfo1_ptr);
+            drawImage(screenSurface, image1_ptr, imageInfo1_ptr, 0, 0);
+            drawImage(screenSurface, image2_ptr, imageInfo2_ptr, 0, imageInfo2_ptr->height);
             /* Update the screen */
             SDL_UpdateWindowSurface(window);
             while (windowOpen) {
                 while (SDL_PollEvent(&Events)) {
-                    if (Events.type == SDL_QUIT)
+                    if (Events.type == SDL_QUIT || Events.type == SDL_KEYDOWN)
                         windowOpen = false;
                 }
 
@@ -127,31 +121,54 @@ void compareImages(char *image1, char *image2) {
         }
 
         /* Destroy the window */
+        SDL_FreeSurface(screenSurface);
         SDL_DestroyWindow(window);
         SDL_Quit();
     }
+
+    fclose(image1_ptr);
+    fclose(image2_ptr);
 }
 
-void drawImage(SDL_Surface *surface, FILE *image_ptr, ImageInfo *imageInfo) {
+/**
+ * Draws the image to the surface starting for the coordinates specified. Coordinates are
+ * used for when the image should be draw side by side of on top of each other
+ * @param surface       SDL surface to draw image on
+ * @param image_ptr     Pointer to the image file
+ * @param imageInfo_ptr Information about the image
+ * @param startX        X Position to start the image
+ * @param startY        Y Position to start the image
+ */
+void drawImage(SDL_Surface *surface, FILE *image_ptr, ImageInfo *imageInfo_ptr, int startX, int startY) {
     int r, g, b;
-    fseek(image_ptr, imageInfo->pixelMapOffset, SEEK_SET - 1);
 
-    for (int i=0; i < imageInfo->height; i++) {
-        for (int j=0; j < imageInfo->width; j++) {
+    // move to the pixel map -1 so the first byte is the the first of the image map
+    fseek(image_ptr, imageInfo_ptr->pixelMapOffset, SEEK_SET - 1);
+
+    for (int y=startY; y < imageInfo_ptr->height + startY; y++) {
+        for (int x=startX; x < imageInfo_ptr->width + startX; x++) {
             r=fgetc(image_ptr);
             g=fgetc(image_ptr);
             b=fgetc(image_ptr);
-            drawPixel(surface, j, i, r, g, b);
+            drawPixel(surface, x, y, r, g, b);
         }
     }
 }
 
+/**
+ * Draws a pixel to an SDL Surface
+ *
+ * @param surface   SDL surface
+ * @param x         x position
+ * @param y         y position
+ * @param r         red pixel
+ * @param g         green pixel
+ * @param b         blue pixel
+ */
 void drawPixel(SDL_Surface *surface, int x, int y, int r, int g, int b) {
     /* Make p point to the place we want to draw the pixel */
-    printf("%d %d %d\n", r, g, b);
     int *p = (int *) surface->pixels + y * surface->pitch/4 + x * (surface->format->BytesPerPixel /4);
 
-   // printf("", surface->)
     /* Draw the pixel! */
     *p = SDL_MapRGB(surface->format, r, g, b);
 }

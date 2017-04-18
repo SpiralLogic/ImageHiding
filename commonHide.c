@@ -68,7 +68,7 @@ void encodeMessageInFile(char *inputFile, char *outputFile, MessageInfo *message
     copyHeader(inputFile_ptr, outfile_ptr, imageInfo_ptr);
 
     //Set to the start of the pixel map
-    fseek(inputFile_ptr, imageInfo_ptr->pixelMapOffset, SEEK_SET - 1);
+    fseek(inputFile_ptr, imageInfo_ptr->pixelMapOffset, SEEK_SET);
 
     if (messageInfo->hideMode == single && messageInfo->length * 8 > imageSize) {
         fclose(outfile_ptr);
@@ -199,9 +199,6 @@ MessageInfo *readFromInput() {
         errorAndExit("Failed to allocate content", NULL);
     }
 
-    // Dunno why sometimes I need to use 3
-    printf("Input secret message press ctrl+D 1-3 times when finished\n");
-
     // Keep reading a buffer sized amount of characters until EOF is reached
     while (1) {
         nextChar = fgetc(stdin);
@@ -211,7 +208,7 @@ MessageInfo *readFromInput() {
 
         if (ferror(stdin)) {
             free(input);
-            errorAndExit("Error reading from stdin.", NULL);
+            errorAndExit("Error reading from message source.", NULL);
         }
 
         inputSize++;
@@ -231,8 +228,8 @@ MessageInfo *readFromInput() {
 
     input[inputSize] = EOF;
 
-    //returns the pointer to the read in string
     *messageInfo = (MessageInfo) {.message = input, .currentPos = 0, .length = inputSize + 1};
 
+    //returns the pointer to the read in string
     return messageInfo;
 }
