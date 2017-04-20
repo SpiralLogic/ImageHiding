@@ -10,6 +10,10 @@
 #define PATH_MAX 4096
 #endif
 
+#ifndef PIDS_TO_STORE
+#define PIDS_TO_STORE 10
+#endif
+
 void usage();
 void fSwitch(int argc, char *argv[]);
 void mSwitch(int argc, char *argv[]);

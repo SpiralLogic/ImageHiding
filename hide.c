@@ -10,6 +10,8 @@
 #include <errno.h>
 #include <limits.h>
 #include <unistd.h>
+#include <sys/types.h>
+#include <sys/wait.h>
 
 #include "common.h"
 #include "commonHide.h"
@@ -21,7 +23,10 @@
 /**
  * Parses input arguments to make sure they are valid, determines the input file and then uses the
  * correct encode function to encode the message into the image file.
-*/
+ *
+ * @param argc original argument count
+ * @param argv original input parameters
+ * */
 int main(int argc, char *argv[]) {
     if (argc == 1) {
         usage();
@@ -45,6 +50,7 @@ int main(int argc, char *argv[]) {
 /**
  * Handles the case where no switches are given
  *
+ * @param argc original argument count
  * @param argv original input parameters
  */
 void noSwitch(int argc, char *argv[]) {
@@ -76,6 +82,7 @@ void noSwitch(int argc, char *argv[]) {
 /**
  * Handles the case where multiple files need to be used to hide a message
  *
+ * @param argc original argument count
  * @param argv original input parameters
  */
 void mSwitch(int argc, char *argv[]) {
@@ -136,6 +143,9 @@ void pSwitch(int argc, char *argv[]) {
     char *inputFile;
     FILE *inputFile_ptr;
     char textFile[PATH_MAX], inputImage[PATH_MAX], outputImage[PATH_MAX];
+    int currentCommand =0, status = 0;
+    // allocate 10 pids for now
+    int *pids = malloc(PIDS_TO_STORE * sizeof(int));
 
     if (argc != 3) {
         usage();
@@ -149,27 +159,41 @@ void pSwitch(int argc, char *argv[]) {
         errorAndExit("Could not open input text file", NULL);
     }
 
-    while (fscanf(inputFile_ptr, "%s %s %s", textFile, inputImage, outputImage) == 3) {
-
+    while (fscanf(inputFile_ptr, "%s %s %s", textFile, inputImage, outputImage) == 3 && !ferror(inputFile_ptr) && !feof(inputFile_ptr)) {
         pid_t pid = fork();
 
         if (pid == -1) {
             errorAndExit("Couldn't fork", inputFile_ptr);
         }
-
         if (pid == 0) {
             char *arguments[5] = { argv[0], "-f", textFile, inputImage, outputImage };
             int returnint = execv(arguments[0], arguments);
             printf("%d\n", returnint);
             exit(0);
+        } else {
+            pids[currentCommand] = pid;
+            currentCommand++;
+
+            if (currentCommand % PIDS_TO_STORE == 1) {
+                int *pids = realloc(pids, (currentCommand + PIDS_TO_STORE) * sizeof(int));
+
+                if (pids == NULL) {
+                    errorAndExit("Could not allocate memory", inputFile_ptr);
+                }
+            }
         }
     }
+
+    for (int i = 0; i<currentCommand; i++) {
+        waitpid(pids[i], &status, 0);
+    }
+
     if (ferror(inputFile_ptr)) {
         errorAndExit("Error reading input file", inputFile_ptr);
     }
 
     fclose(inputFile_ptr);
-    printf("\n Finished encoding into images\n");
+    printf("\nFinished encoding into images\n");
     exit(0);
 }
 
@@ -244,7 +268,7 @@ void fSwitch(int argc, char *argv[]) {
     encodeMessageInFile(inputFile, outputFile, messageInfo);
     freeSecretMessageStruct(messageInfo);
 
-    printf("\nSuccessfully hid message in %s!\n", outputFile);
+    printf("Successfully hid message in %s!\n", outputFile);
 }
 
 /**
