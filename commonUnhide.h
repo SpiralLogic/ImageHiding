@@ -9,6 +9,6 @@
 
 #include "common.h"
 
-void decodeImage(char* inputFile);
+bool decodeImage(char* inputFile);
 
 #endif //ASS1_COMMONUNHIDE_H

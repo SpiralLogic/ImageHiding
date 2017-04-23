@@ -17,8 +17,8 @@ DEBUGGING = debug
 #################################
 # file lists
 #################################
-HIDEFILES = hide.c common.c commonHide.c compareImages.c ppmCommon.c bmpCommon.c
-UNHIDEFILES = unhide.c common.c commonUnhide.c ppmCommon.c bmpCommon.c
+HIDEFILES = hide.c common.o commonHide.o compareImages.o ppmCommon.o bmpCommon.o
+UNHIDEFILES = unhide.c common.o commonUnhide.o ppmCommon.o bmpCommon.o
 
 #################################
 # Each of the make builds
@@ -54,10 +54,10 @@ $(UNHIDE_PROGRAM): unhide.c ppmCommon.o bmpCommon.o common.o commonUnhide.o
 #################################
 alldebug: $(HIDE_PROGRAM)$(DEBUGGING) $(UNHIDE_PROGRAM)$(DEBUGGING)
 
-$(HIDE_PROGRAM)$(DEBUGGING):
+$(HIDE_PROGRAM)$(DEBUGGING): $(HIDEFILES)
 	$(CC) $(CFLAGS) $(SDLCFLAGS) -DDEBUG -g -o $(HIDE_PROGRAM) $(HIDEFILES) $(SDLLIBS)
 
-$(UNHIDE_PROGRAM)$(DEBUGGING):
+$(UNHIDE_PROGRAM)$(DEBUGGING): $(UNHIDEFILES)
 	$(CC) $(CFLAGS) -DDEBUG -g -o $(UNHIDE_PROGRAM) $(UNHIDEFILES)
 
 #################################

@@ -13,8 +13,9 @@
 #define PATH_MAX 4096
 #endif
 
-void usage();
-void mSwitch(int argc, char *argv[]);
 void noSwitch(int argc, char *argv[]);
+void mSwitch(int argc, char *argv[]);
+void dSwitch(int argc, char *argv[]);
+void usage();
 
 #endif //ASS1_UNHIDE_H

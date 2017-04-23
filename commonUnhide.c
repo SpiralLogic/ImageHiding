@@ -15,8 +15,9 @@
  * decodes a 24 bit image from a  file. A EOF marks the end of the encoded message
  *
  * @param inputFile input file to decode message from
+ * @return true when complete message was decoded
 */
-void decodeImage(char* inputFile) {
+bool decodeImage(char* inputFile) {
     char messageChar = (char) '\0';
     int nextByte;
     int currentBit = 0;
@@ -60,7 +61,8 @@ void decodeImage(char* inputFile) {
         messageChar |= nextByte & 0x01;
         if (currentBit == 7) {
             if (messageChar == EOF) {
-              break;
+                fclose(inputFile_ptr);
+                return true;
             }
             printf("%c", messageChar);
             currentBit = 0;
@@ -71,4 +73,6 @@ void decodeImage(char* inputFile) {
     }
 
     fclose(inputFile_ptr);
+
+    return false;
 }

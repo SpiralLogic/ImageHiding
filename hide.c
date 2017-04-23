@@ -12,6 +12,8 @@
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/wait.h>
+#include <dirent.h>
+#include <sys/stat.h>
 
 #include "common.h"
 #include "commonHide.h"
@@ -40,6 +42,8 @@ int main(int argc, char *argv[]) {
         sSwitch(argc, argv);
     } else if (strcmp(argv[1], "-f") == 0) {
         fSwitch(argc, argv);
+    } else if (strcmp(argv[1], "-d") == 0) {
+        dSwitch(argc, argv);
     } else {
         noSwitch(argc, argv);
     }
@@ -141,6 +145,7 @@ void mSwitch(int argc, char *argv[]) {
 /**
  * Handles the case where parallel execution is used to hide the message
  *
+ * @param argc original argument count
  * @param argv original input parameters
  */
 void pSwitch(int argc, char *argv[]) {
@@ -276,6 +281,66 @@ void fSwitch(int argc, char *argv[]) {
 }
 
 /**
+ * Switch for encoding a message into a directory of images
+ *
+ * @param argc original argument count
+ * @param argv original input parameters
+ */
+void dSwitch(int argc, char *argv[]) {
+    char *inputDirectory, *outputDirectory;
+    MessageInfo *messageInfo;
+    DIR *inputDirectory_ptr;
+    char inputImage[PATH_MAX], outputImage[PATH_MAX];
+    struct dirent *dir;
+    struct stat st;
+
+
+    if (argc != 4) {
+        usage();
+        errorAndExit("Incorrect number of parameters passed", NULL);
+    }
+
+    inputDirectory = argv[2];
+    outputDirectory = argv[3];
+
+    inputDirectory_ptr = opendir(inputDirectory);
+
+    if (inputDirectory_ptr == NULL) {
+        fprintf(stderr, "\nCould not open directory: %s\n", inputDirectory);
+        exit(1);
+    }
+
+    if (stat(outputDirectory, &st) != 0)
+    {
+        if (mkdir(outputDirectory, 0755) == -1) {
+            closedir(inputDirectory_ptr);
+            fprintf(stderr, "\nCould not create directory: %s\n", outputDirectory);
+            exit(1);
+        }
+    }
+
+    printf("Input secret message press ctrl+D 1-3 times when finished\n");
+    messageInfo = readFromInput();
+    messageInfo->hideMode = multiple;
+
+    while ((dir = readdir(inputDirectory_ptr)) != NULL)
+    {
+        if (dir->d_type != DT_DIR){
+            sprintf(inputImage, "%s/%s", inputDirectory, dir->d_name);
+            sprintf(outputImage, "%s/%s", outputDirectory, dir->d_name);
+
+            printf("Hiding into: %s\n", inputImage);
+            printf("Output as: %s\n", outputImage);
+            encodeMessageInFile(inputImage, outputImage, messageInfo);
+        }
+    }
+
+    closedir(inputDirectory_ptr);
+    freeSecretMessageStruct(messageInfo);
+    printf("Successfully hid message. Output image directory: %s!\n", outputDirectory);
+}
+
+/**
  * displays the use for this executable
 */
 void usage() {
@@ -284,4 +349,6 @@ void usage() {
     printf("./hide -m numfiles base outputbase\n");
     printf("./hide -s inputimage outputfile\n");
     printf("./hide -p input file\n");
+    printf("./hide -d inputdirectory outputdirectory\n");
+
 }

@@ -6,6 +6,8 @@
 
 #include <unistd.h>
 #include <string.h>
+#include <dirent.h>
+#include <stdlib.h>
 
 #include "common.h"
 #include "commonUnhide.h"
@@ -23,7 +25,9 @@ int main(int argc, char *argv[]) {
         usage();
         return 1;
     }
-    if (strcmp(argv[1], "-m") == 0) {
+    if (strcmp(argv[1], "-d") == 0) {
+        dSwitch(argc, argv);
+    } else if (strcmp(argv[1], "-m") == 0) {
         mSwitch(argc, argv);
     } else {
         noSwitch(argc, argv);
@@ -35,8 +39,9 @@ int main(int argc, char *argv[]) {
 /**
  * Handles the case where no switches are given
  *
+ * @param argc original argument count
  * @param argv original input parameters
- */
+ * */
 void noSwitch(int argc, char *argv[]) {
     char *imageFile;
 
@@ -55,6 +60,8 @@ void noSwitch(int argc, char *argv[]) {
 /**
  * Handles the case where multiple files need to be used to hide a message
  *
+
+ * @param argc original argument count
  * @param argv original input parameters
  */
 void mSwitch(int argc, char *argv[]) {
@@ -73,14 +80,58 @@ void mSwitch(int argc, char *argv[]) {
     while (1) {
         sprintf(inputPath, "%s-%03d.ppm", basename, i);
         // if the file exists read message from it
-        if (access(inputPath, R_OK) != -1 ) {
-            decodeImage(inputPath);
+        if (access(inputPath, R_OK) != -1) {
+            if (decodeImage(inputPath)) {
+                printf("\n##################\n");
+                break;
+            }
         } else {
-            printf("\n##################\n");
-            return;
+            fprintf(stderr, "Could not read image file: %s", inputPath);
+            exit(1);
         }
         i++;
     }
+}
+
+/**
+ * Switch for decoding an entire directory of images
+ *
+ * @param argc original argument count
+ * @param argv original input parameters
+ */
+void dSwitch(int argc, char *argv[]) {
+    char *imageDirectory;
+    DIR *imageDirectory_ptr;
+    char inputImage[PATH_MAX];
+    struct dirent *dir;
+
+    if (argc != 3) {
+        usage();
+        errorAndExit("Incorrect number of parameters passed", NULL);
+    }
+
+    imageDirectory = argv[2];
+
+    imageDirectory_ptr = opendir(imageDirectory);
+
+    if (imageDirectory_ptr == NULL) {
+        fprintf(stderr, "\nCould not open directory: %s\n", imageDirectory);
+        exit(1);
+    }
+
+    printf("##################\n");
+
+    while ((dir = readdir(imageDirectory_ptr)) != NULL) {
+        if (dir->d_type != DT_DIR) {
+            sprintf(inputImage, "%s/%s", imageDirectory, dir->d_name);
+            if (decodeImage(inputImage)) {
+                break;
+            }
+        }
+    }
+
+    printf("\n##################\n");
+    closedir(imageDirectory_ptr);
 }
 
 /**
@@ -89,4 +140,6 @@ void mSwitch(int argc, char *argv[]) {
 void usage() {
     printf("\nUsage\n");
     printf("./unhide filename\n");
+    printf("./unhide -m basename\n");
+    printf("./unhide -d directory\n");
 }

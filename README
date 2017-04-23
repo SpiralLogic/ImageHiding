@@ -36,7 +36,9 @@ make unhidedebug 		- makes unhide with debug output
 
 HIDING:
 ###########
+********************************
 To hide a message within a image:
+********************************
 ./hide imagename outputfilename
 
 Example:
@@ -45,7 +47,9 @@ Example:
 The end of the message is marked up a EOF character. This can be enter into the terminal by presseing ctrl+D
 sometimes it takes a couple of ctrl+Ds to work. Dunno why
 
+********************************
 To hide a message and show the before and after image:
+********************************
 ./hide -s imagename outputfilename
 
 Example:
@@ -53,7 +57,9 @@ Example:
 
 To close the close when complete either click the X or push any key on the display window
 
+********************************
 To hide a message in multiple images:
+********************************
 ./hide -m numimages basename outputbase
 
 Example:
@@ -62,8 +68,9 @@ Example:
 This will hide the message across 5 ppm images from the input directory starting from images/example-000.ppm to
 images/example-004.ppm
 
-
+********************************
 To hide a message in parellel:
+********************************
 ./hide -p infofile
 
 Example:
@@ -74,19 +81,43 @@ format for the txt file is :
 text.txt image1.ppm output1.ppm
 text2.txt image2.ppm output2.ppm
 
+********************************
+To hide a message in a directory of files
+********************************
+./hide -d inputdirectory outputdirectory
+
+Example:
+./hide -d inputimages/ outputimages/
+
+This will hide a message in a directory of images. **WARNING** If an unsupported file is in the directory
+it will cause an unsupported image error.
+Both BMP and PPM are supported in this mode
+
 UNHIDING:
 ###########
+********************************
 To unhide a message from an image:
 ./unhide filename
+********************************
 
 Example:
 ./unhide output.ppm
 
+********************************
 To unhide a message from multiple images:
+********************************
 ./unhide -m numfiles basename
 
 Example:
 ./unhide -m 5 outputbase
+
+********************************
+To unhide a message from a directory of images
+********************************
+./unhide -d directory
+
+Example:
+./unhide -d output/
 
 
 If the image does not contain a message then the output message may be garbled or not exist at all.
@@ -95,6 +126,14 @@ The output of the message will be start and end with a line of '################
 
 SUPPORTED FUNCTIONALITY:
 ########################
+
+noswitch: Hide in one image
+-m: Hide in multiple images
+-s: Show before and after images
+-p: hide in images in parallel
+-d: hide message in a directory of images
+
+
 Both hiding and unhiding a message within both a 24Bit (255 depth) standard PPM image and 24 Bit BMP images.
 A BMP with an alpha channel or compression is not supported.
 
@@ -108,22 +147,3 @@ message lengths which are too long.
 
 Piping is supported. Example
 printf "Test" | ./hide input.ppm output.ppm
-
-Minimal memory is used during hiding as 1 character from input, read from file encoded and then written to the output
-image
-
-TEST SUITE:
-########################
-0 successful execution
-1 failed execution (printed to stderr)
-
-
-TEST SUITE:
-########################
-A test suite of images is provided. This runs a series of tests through both unhide and hide.
-Results are stored in log.txt and included leak detection form valgrind
-
-Unfortunately results need to be via manual inspection.
-This can be done with
-less log.txt
-

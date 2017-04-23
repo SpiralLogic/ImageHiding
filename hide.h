@@ -16,11 +16,12 @@
 #define PIDS_TO_STORE 10
 #endif
 
+void noSwitch(int argc, char *argv[]);
 void mSwitch(int argc, char *argv[]);
 void pSwitch(int argc, char *argv[]);
 void sSwitch(int argc, char *argv[]);
-void noSwitch(int argc, char *argv[]);
-void usage();
 void fSwitch(int argc, char *argv[]);
+void dSwitch(int argc, char *argv[]);
+void usage();
 
 #endif //ASS1_HIDE_H_H
