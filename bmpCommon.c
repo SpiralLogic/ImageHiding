@@ -4,11 +4,14 @@
  * All of the common BMP functions.
  *
 */
+
 #include "common.h"
 #include "bmpCommon.h"
 
 /**
  * Returns the information about a BMP file if the file is valid
+ *
+ * @param file_ptr pointer to the image file
 */
 ImageInfo verifyAndGetBmpInfo(FILE *file_ptr) {
     ImageInfo imageInfo = getBmpImageInfo(file_ptr);
@@ -28,6 +31,8 @@ ImageInfo verifyAndGetBmpInfo(FILE *file_ptr) {
 
 /**
  * Determines the image information of BMP file
+ *
+ * @param file_ptr pointer to the image file
 */
 ImageInfo getBmpImageInfo(FILE *file_ptr) {
     ImageInfo imageInfo = {.type = bmp, .height = 0, .width =0, .depth = 0, .pixelMapOffset = 0, .successRead = false};

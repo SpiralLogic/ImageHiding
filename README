@@ -1,5 +1,5 @@
 #####################################################################
-                          	  3042 Assignment 1
+                          	  3042 Assignment 2
                           	      Hide/Unhide
                           	  Image Steganography
                              
@@ -10,7 +10,6 @@
 
 INTRODUCTION:
 #############
-
 This following set of tools written in C allows for the hiding of
 a message with images.
 
@@ -22,6 +21,8 @@ COMPILING:
 ############
 GCC is used to compile and compilation should be supported up until C99
 The program can be complied in the following ways:
+
+Requires the SDL2 Library to compile
 
 make clean			  	- cleans any previous compilation and removes any output files
 
@@ -42,7 +43,36 @@ Example:
 ./hide example.ppm output.ppm
 
 The end of the message is marked up a EOF character. This can be enter into the terminal by presseing ctrl+D
-sometimes it takes a couple of ctrl+ds to work. Dunno why
+sometimes it takes a couple of ctrl+Ds to work. Dunno why
+
+To hide a message and show the before and after image:
+./hide -s imagename outputfilename
+
+Example:
+./hide -s example.ppm output.ppm
+
+To close the close when complete either click the X or push any key on the display window
+
+To hide a message in multiple images:
+./hide -m numimages basename outputbase
+
+Example:
+./hide -m 5 images/example output/output
+
+This will hide the message across 5 ppm images from the input directory starting from images/example-000.ppm to
+images/example-004.ppm
+
+
+To hide a message in parellel:
+./hide -p infofile
+
+Example:
+./hide -p multiimage.txt
+
+This will hide multi messages in parallel across multiple files
+format for the txt file is :
+text.txt image1.ppm output1.ppm
+text2.txt image2.ppm output2.ppm
 
 UNHIDING:
 ###########
@@ -51,6 +81,13 @@ To unhide a message from an image:
 
 Example:
 ./unhide output.ppm
+
+To unhide a message from multiple images:
+./unhide -m numfiles basename
+
+Example:
+./unhide -m 5 outputbase
+
 
 If the image does not contain a message then the output message may be garbled or not exist at all.
 

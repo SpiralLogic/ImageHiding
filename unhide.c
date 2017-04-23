@@ -3,6 +3,7 @@
  *
  * Main executable for unhiding a message in an image file
 */
+
 #include <unistd.h>
 #include <string.h>
 
@@ -13,6 +14,9 @@
 /**
  * Parses input arguments to make sure they are valid, determines the input file and then uses the
  * correct decode function to decode the message from the image file.
+ *
+ * @param argc number of input arguments
+ * @param argv input argument array
 */
 int main(int argc, char *argv[]) {
     if (argc == 1) {
@@ -64,11 +68,15 @@ void mSwitch(int argc, char *argv[]) {
 
     basename = argv[2];
     int i = 0;
+    printf("##################\n");
+
     while (1) {
         sprintf(inputPath, "%s-%03d.ppm", basename, i);
+        // if the file exists read message from it
         if (access(inputPath, R_OK) != -1 ) {
             decodeImage(inputPath);
         } else {
+            printf("\n##################\n");
             return;
         }
         i++;

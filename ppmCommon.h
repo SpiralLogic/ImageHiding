@@ -1,7 +1,9 @@
 /**
  * Created by Sol Jennings on 13/3/17.
  *
+ * Contains the common functionality required for PPM file
 */
+
 #ifndef ASS1_PPMCOMMON_H
 #define ASS1_PPMCOMMON_H
 

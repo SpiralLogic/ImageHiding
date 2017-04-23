@@ -1,5 +1,7 @@
 /**
  * Created by Sol Jennings on 13/3/17.
+ *
+ * Includes common functions used in both hiding and unhiding
 */
 
 #ifndef ASS1_COMMON_H

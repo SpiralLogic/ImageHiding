@@ -3,14 +3,18 @@
  *
  * Contains all the common functionality to unhide an image
 */
+
 #include <stdio.h>
 #include <stdlib.h>
 
 #include "commonUnhide.h"
 #include "bmpCommon.h"
 #include "ppmCommon.h"
+
 /**
- * decodes a 24 bit image from a  file. A null terminator \0 marks the end of the encoded message
+ * decodes a 24 bit image from a  file. A EOF marks the end of the encoded message
+ *
+ * @param inputFile input file to decode message from
 */
 void decodeImage(char* inputFile) {
     char messageChar = (char) '\0';

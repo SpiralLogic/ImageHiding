@@ -9,6 +9,8 @@
 
 /**
  * Gets the type of image based on the magic number read from the file header
+ *
+ * @param file_ptr pointer of the file to get image type for
 */
 enum ImageType getImageType(FILE *file_ptr) {
     int firstChar, secondChar;
@@ -31,6 +33,9 @@ enum ImageType getImageType(FILE *file_ptr) {
 /**
  * Prints an error message and exits. Also puts the error message in stderr
  * closes a file pointer if it is open
+ *
+ * @param error error message
+ * @param file_ptr a file pointer to close
 */
 void errorAndExit(char *error, FILE *file_ptr) {
     if (file_ptr != NULL) {
@@ -43,6 +48,9 @@ void errorAndExit(char *error, FILE *file_ptr) {
 /**
  * Prints a message and exits
  * closes a file pointer if it is open
+ *
+ * @param message message pointer
+ * @param file_ptr file pointer to close
 */
 void messageAndExit(char *message, FILE *file_ptr) {
     if (file_ptr != NULL) {
@@ -56,6 +64,8 @@ void messageAndExit(char *message, FILE *file_ptr) {
 
 /**
 * Prints the information about an image
+*
+* @param imageInfo image info pointer
 */
 void printImageInfo(ImageInfo *imageInfo) {
     printf("width %d\n", (*imageInfo).width);

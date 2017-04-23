@@ -3,6 +3,7 @@
  *
  * Contains the common functionality required for PPM file
 */
+
 #include <stdio.h>
 #include <stdbool.h>
 

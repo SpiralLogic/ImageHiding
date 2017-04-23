@@ -3,6 +3,7 @@
  *
  * Contains the common functionality required to hide an image
 */
+
 #include <memory.h>
 #include <stdlib.h>
 
@@ -226,6 +227,8 @@ MessageInfo *readFromInput() {
 
     input = realloc(input, inputSize + 1);
 
+
+    // EOF is stored to represent the end of the message
     input[inputSize] = EOF;
 
     *messageInfo = (MessageInfo) {.message = input, .currentPos = 0, .length = inputSize + 1};

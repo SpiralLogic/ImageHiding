@@ -1,7 +1,9 @@
 /**
- * Created by Sol Jennings on 23/3/17.
+ * Created by Sol Jennings on 13/3/17.
  *
+ * Main executable for hiding a message in an image file
 */
+
 
 #ifndef ASS1_HIDE_H_H
 #define ASS1_HIDE_H_H
@@ -14,11 +16,11 @@
 #define PIDS_TO_STORE 10
 #endif
 
-void usage();
-void fSwitch(int argc, char *argv[]);
 void mSwitch(int argc, char *argv[]);
 void pSwitch(int argc, char *argv[]);
 void sSwitch(int argc, char *argv[]);
 void noSwitch(int argc, char *argv[]);
+void usage();
+void fSwitch(int argc, char *argv[]);
 
 #endif //ASS1_HIDE_H_H

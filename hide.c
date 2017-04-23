@@ -108,14 +108,18 @@ void mSwitch(int argc, char *argv[]) {
         num_files = conv;
     }
 
-    if (num_files < 0) {
+    if (num_files < 1) {
         errorAndExit("Must be at least 1 file to hide message in", NULL);
-    } else if (num_files > 1000) {
-        errorAndExit("Maximum number of files to hide in is 1000", NULL);
+    } else if (num_files > 255) {
+        errorAndExit("Maximum number of files to hide in is 255", NULL);
     }
 
     basename = argv[3];
     outputBasename = argv[4];
+
+
+    // Dunno why sometimes I need to use 3
+    printf("Input secret message press ctrl+D 1-3 times when finished\n");
 
     messageInfo = readFromInput();
     messageInfo->hideMode = multiple;
@@ -130,7 +134,7 @@ void mSwitch(int argc, char *argv[]) {
     }
 
     if (messageInfo->currentPos < messageInfo->length) {
-        errorAndExit("Could not hide complete message in image", NULL);
+        errorAndExit("Could not hide complete message in images. Please try with more images or a shorter message", NULL);
     }
 }
 

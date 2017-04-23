@@ -2,6 +2,8 @@
  * Created by Sol Jennings on 17/4/17.
  *
  * Functions for comparing 2 images to a user using SDL
+ *
+ * Images are compared with the original on the top and the encoded image on the bottom
  */
 
 #include <memory.h>
@@ -167,7 +169,7 @@ void drawImage(SDL_Surface *surface, FILE *image_ptr, ImageInfo *imageInfo_ptr, 
  */
 void drawPixel(SDL_Surface *surface, int x, int y, int r, int g, int b) {
     /* Make p point to the place we want to draw the pixel */
-    int *p = (int *) surface->pixels + y * surface->pitch/4 + x * (surface->format->BytesPerPixel /4);
+    int *p = (int *) surface->pixels + y * surface->pitch/surface->format->BytesPerPixel + x;
 
     /* Draw the pixel! */
     *p = SDL_MapRGB(surface->format, r, g, b);
