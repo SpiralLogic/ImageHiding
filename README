@@ -38,9 +38,9 @@ make unhidedebug 		- makes unhide with debug output
 
 HIDING:
 ###########
-********************************
+****************************************************************
 To hide a message within a image:
-********************************
+****************************************************************
 ./hide imagename outputfilename
 
 Example:
@@ -49,9 +49,9 @@ Example:
 The end of the message is marked up a EOF character. This can be enter into the terminal by presseing ctrl+D
 sometimes it takes a couple of ctrl+Ds to work. Dunno why
 
-********************************
+****************************************************************
 To hide a message and show the before and after image:
-********************************
+****************************************************************
 ./hide -s imagename outputfilename
 
 Example:
@@ -59,9 +59,9 @@ Example:
 
 To close the close when complete either click the X or push any key on the display window
 
-********************************
+****************************************************************
 To hide a message in multiple images:
-********************************
+****************************************************************
 ./hide -m numimages basename outputbase
 
 Example:
@@ -70,9 +70,9 @@ Example:
 This will hide the message across 5 ppm images from the input directory starting from images/example-000.ppm to
 images/example-004.ppm
 
-********************************
+****************************************************************
 To hide a message in parellel:
-********************************
+****************************************************************
 ./hide -p infofile
 
 Example:
@@ -83,9 +83,9 @@ format for the txt file is :
 text.txt image1.ppm output1.ppm
 text2.txt image2.ppm output2.ppm
 
-********************************
+****************************************************************
 To hide a message in a directory of files
-********************************
+****************************************************************
 ./hide -d inputdirectory outputdirectory
 
 Example:
