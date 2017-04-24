@@ -1,21 +1,23 @@
-#####################################################################
-                          	  3042 Assignment 2
-                          	      Hide/Unhide
+######################################################################################################                          	      Hide/Unhide
                           	  Image Steganography
                              
                              by Solomon Jennings
-                           		  26356015
-#####################################################################
-
+######################################################################################################
 
 INTRODUCTION:
 #############
-This following set of tools written in C allows for the hiding of
+This following set of tools written in C  for linux that allows for the hiding of
 a message with images.
 
 Currently supported images are:
 Standard Binary PPM
 24 bit BMPs
+
+To try for yourself after compiling:
+
+printf "This is a hidden message!" | ./hide images/cross.pbm output.ppm
+./unhide output.ppm
+
 
 COMPILING:
 ############
@@ -95,25 +97,25 @@ Both BMP and PPM are supported in this mode
 
 UNHIDING:
 ###########
-********************************
+****************************************************************
 To unhide a message from an image:
+****************************************************************
 ./unhide filename
-********************************
 
 Example:
 ./unhide output.ppm
 
-********************************
+****************************************************************
 To unhide a message from multiple images:
-********************************
+****************************************************************
 ./unhide -m numfiles basename
 
 Example:
 ./unhide -m 5 outputbase
 
-********************************
+****************************************************************
 To unhide a message from a directory of images
-********************************
+****************************************************************
 ./unhide -d directory
 
 Example:
