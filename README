@@ -1,13 +1,13 @@
 ######################################################################################################                          	      Hide/Unhide
-                          	  Image Steganography
+                          	 Image Steganography
                              
                              by Solomon Jennings
 ######################################################################################################
 
 INTRODUCTION:
 #############
-This following set of tools written in C  for linux that allows for the hiding of
-a message with images.
+This following set of tools written in C for linux that allows for the hiding of
+a message within images.
 
 Currently supported images are:
 Standard Binary PPM
@@ -46,8 +46,8 @@ To hide a message within a image:
 Example:
 ./hide example.ppm output.ppm
 
-The end of the message is marked up a EOF character. This can be enter into the terminal by presseing ctrl+D
-sometimes it takes a couple of ctrl+Ds to work. Dunno why
+The end of the message is marked up a EOF character. This can be enter into the terminal by pressing ctrl+D
+sometimes it takes a couple of ctrl+Ds to work.
 
 ****************************************************************
 To hide a message and show the before and after image:
@@ -71,7 +71,7 @@ This will hide the message across 5 ppm images from the input directory starting
 images/example-004.ppm
 
 ****************************************************************
-To hide a message in parellel:
+To hide a message in parallel:
 ****************************************************************
 ./hide -p infofile
 
@@ -114,7 +114,7 @@ Example:
 ./unhide -m 5 outputbase
 
 ****************************************************************
-To unhide a message from a directory of images
+To unhide a message into a directory of images
 ****************************************************************
 ./unhide -d directory
 
