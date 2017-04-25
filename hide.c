@@ -23,8 +23,7 @@
 #include "hide.h"
 
 /**
- * Parses input arguments to make sure they are valid, determines the input file and then uses the
- * correct encode function to encode the message into the image file.
+ * Determines which mode to execute in.
  *
  * @param argc original argument count
  * @param argv original input parameters
