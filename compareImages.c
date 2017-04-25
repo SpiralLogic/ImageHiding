@@ -97,7 +97,7 @@ void compareImages(char *image1, char *image2) {
                            imageInfo1_ptr->width : imageInfo2_ptr->width;
 
         /* Create the window */
-        window = SDL_CreateWindow("Image Comparison: Original Top / Encoded Bottom",
+        window = SDL_CreateWindow("Original Top / Encoded Bottom",
                                   SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
                                   surfaceWidth,
                                   surfaceHeight,
