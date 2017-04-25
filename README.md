@@ -1,6 +1,6 @@
 ---------------------------------------------------------------------
  <p align="center">
-                                Hide/Unhide
+                                Hide/Unhide<br>
                           	 Image Steganography
      </p>            <p align="center">             
                              by Solomon Jennings
