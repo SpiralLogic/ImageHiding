@@ -11,8 +11,8 @@ This following set of tools written in C for linux that allows for the hiding of
 a message within images.
 
 Currently supported images are:
-Standard Binary PPM
-24 bit BMPs
+* Standard Binary PPM
+* 24 bit BMPs
 
 To try for yourself after compiling:
 
