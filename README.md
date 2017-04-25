@@ -1,8 +1,11 @@
 ---------------------------------------------------------------------
-                                 Hide/Unhide
+ <p align="center">
+                                Hide/Unhide
                           	 Image Steganography
-                             
+     </p>            <p align="center">             
                              by Solomon Jennings
+</p>
+
 ---------------------------------------------------------------------
 
 ### INTRODUCTION:
