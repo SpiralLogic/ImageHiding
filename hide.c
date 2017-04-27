@@ -120,7 +120,6 @@ void mSwitch(int argc, char *argv[]) {
     basename = argv[3];
     outputBasename = argv[4];
 
-
     // Dunno why sometimes I need to use 3
     printf("Input secret message press ctrl+D 1-3 times when finished\n");
 
@@ -131,11 +130,12 @@ void mSwitch(int argc, char *argv[]) {
         sprintf(inputPath, "%s-%03d.ppm", basename, i);
         sprintf(outputPath, "%s-%03d.ppm", outputBasename, i);
 
-        printf("Hiding into: %s\n", inputPath);
+        printf("\nHiding into: %s\n", inputPath);
         printf("Output as: %s\n", outputPath);
         encodeMessageInFile(inputPath, outputPath, messageInfo);
     }
 
+    freeSecretMessageStruct(messageInfo);
     if (messageInfo->currentPos < messageInfo->length) {
         errorAndExit("Could not hide complete message in images. Please try with more images or a shorter message", NULL);
     }
@@ -183,24 +183,28 @@ void pSwitch(int argc, char *argv[]) {
             currentCommand++;
 
             if (currentCommand % PIDS_TO_STORE == 1) {
-                int *pids = realloc(pids, (currentCommand + PIDS_TO_STORE) * sizeof(int));
+                pids = realloc(pids, (currentCommand + PIDS_TO_STORE) * sizeof(int));
 
                 if (pids == NULL) {
+                    free(pids);
                     errorAndExit("Could not allocate memory", inputFile_ptr);
                 }
             }
         }
     }
 
-    for (int i = 0; i<currentCommand; i++) {
-        waitpid(pids[i], &status, 0);
-    }
+    free(pids);
 
     if (ferror(inputFile_ptr)) {
         errorAndExit("Error reading input file", inputFile_ptr);
     }
 
+    for (int i = 0; i<currentCommand; i++) {
+        waitpid(pids[i], &status, 0);
+    }
+
     fclose(inputFile_ptr);
+
     printf("\nFinished encoding into images\n");
     exit(0);
 }
@@ -274,6 +278,7 @@ void fSwitch(int argc, char *argv[]) {
     fclose(messageFile_ptr);
 
     encodeMessageInFile(inputFile, outputFile, messageInfo);
+
     freeSecretMessageStruct(messageInfo);
 
     printf("Successfully hid message in %s!\n", outputFile);

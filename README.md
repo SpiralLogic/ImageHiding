@@ -104,6 +104,8 @@ Example:
 Example:
 <code>./unhide -m 5 outputbase</code>
 
+Note: If the message cannot fit in all of the images, it will store as much as it can into the images provided
+
 #### To unhide a message into a directory of images
 <code>./unhide -d directory</code>
 
