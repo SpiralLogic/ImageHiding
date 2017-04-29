@@ -18,8 +18,10 @@
  * @param inputFile filename string
  * @param outputFile filename string
  * @param messageInfo secret message info struct
+ *
+ * @return true when successfully hidden
  */
-void encodeMessageInFile(char *inputFile, char *outputFile, MessageInfo *messageInfo) {
+bool encodeMessageInFile(char *inputFile, char *outputFile, MessageInfo *messageInfo) {
     FILE *outfile_ptr, *inputFile_ptr;
     enum ImageType imageType;
     ImageInfo *imageInfo_ptr;
@@ -36,9 +38,12 @@ void encodeMessageInFile(char *inputFile, char *outputFile, MessageInfo *message
     // Work out input image information
     imageType = getImageType(inputFile_ptr);
 
-    if (imageType == unsupported) {
+    if (imageType == unsupported && messageInfo->hideMode != multipleDir) {
         freeSecretMessageStruct(messageInfo);
         errorAndExit("Image type unsupported", inputFile_ptr);
+    } else if (imageType == unsupported && messageInfo->hideMode == multipleDir) {
+        printf("Unsupported image %s, skipped\n", inputFile);
+        return false;
     }
 
     if (imageType == ppm) {
@@ -47,9 +52,12 @@ void encodeMessageInFile(char *inputFile, char *outputFile, MessageInfo *message
         imageInfo = verifyAndGetBmpInfo(inputFile_ptr);
     }
 
-    if (!imageInfo.successRead) {
+    if (!imageInfo.successRead && messageInfo->hideMode != multipleDir) {
         freeSecretMessageStruct(messageInfo);
         errorAndExit(imageInfo.errorMesssage, inputFile_ptr);
+    } else if (!imageInfo.successRead && messageInfo->hideMode == multipleDir) {
+        printf("Couldn't read image %s, skipped\n", inputFile);
+        return false;
     }
 
     imageInfo_ptr = &imageInfo;
@@ -81,11 +89,11 @@ void encodeMessageInFile(char *inputFile, char *outputFile, MessageInfo *message
     // encode the message into the image and output it a byte at a time to the file
     for (size_t i = messageInfo->currentPos; i < messageInfo->length; i++) {
         // Stop if no more of the message can be hidden in the image
-        if ((i + 1 - messageInfo->currentPos) * 8 >= imageSize && messageInfo->hideMode == multiple) {
+        if ((i + 1 - messageInfo->currentPos) * 8 >= imageSize && messageInfo->hideMode != single) {
             messageInfo->currentPos = i;
             fclose(inputFile_ptr);
             fclose(outfile_ptr);
-            return;
+            return true;
         }
 
         nextByte = messageInfo->message[i];
@@ -102,6 +110,7 @@ void encodeMessageInFile(char *inputFile, char *outputFile, MessageInfo *message
 
     fclose(inputFile_ptr);
     fclose(outfile_ptr);
+    return true;
 }
 
 /**
@@ -232,7 +241,7 @@ MessageInfo *readFromInput() {
     input[inputSize] = EOF;
 
     *messageInfo = (MessageInfo) {.message = input, .currentPos = 0, .length = inputSize + 1};
-
+    printf("\n");
     //returns the pointer to the read in string
     return messageInfo;
 }

@@ -21,7 +21,8 @@
  */
 enum HideMode {
   single,
-  multiple
+  multiple,
+  multipleDir
 };
 
 /**
@@ -39,7 +40,7 @@ typedef struct {
   enum HideMode hideMode;
 } MessageInfo;
 
-void encodeMessageInFile(char *inputFile, char *outputFile, MessageInfo *messageInfo);
+bool encodeMessageInFile(char *inputFile, char *outputFile, MessageInfo *messageInfo);
 void copyHeader(FILE *file_ptr, FILE *outfile_ptr, ImageInfo *imageInfo_ptr);
 void encodeByteToOutput(int byte, FILE *file_ptr, FILE *outfile_ptr, char *outputFile, MessageInfo *messageInfo);
 void freeSecretMessageStruct(MessageInfo *messageInfo);

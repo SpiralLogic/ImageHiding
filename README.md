@@ -86,8 +86,9 @@ text2.txt image2.ppm output2.ppm
 Example:
 <code>./hide -d inputimages/ outputimages/</code>
 
-This will hide a message in a directory of images. **WARNING** If an unsupported file is in the directory
-it will cause an unsupported image error.
+This will hide a message in a directory of images in alphabetical order,
+unsupported images and invalid images will be skipped
+
 Both BMP and PPM are supported in this mode
 
 ## UNHIDING:

@@ -135,6 +135,7 @@ void compareImages(char *image1, char *image2) {
 /**
  * Draws the image to the surface starting for the coordinates specified. Coordinates are
  * used for when the image should be draw side by side of on top of each other
+ *
  * @param surface       SDL surface to draw image on
  * @param image_ptr     Pointer to the image file
  * @param imageInfo_ptr Information about the image
@@ -169,7 +170,7 @@ void drawImage(SDL_Surface *surface, FILE *image_ptr, ImageInfo *imageInfo_ptr, 
  */
 void drawPixel(SDL_Surface *surface, int x, int y, int r, int g, int b) {
     /* Make p point to the place we want to draw the pixel */
-    int *p = (int *) surface->pixels + y * surface->pitch/surface->format->BytesPerPixel + x;
+    int *p = surface->pixels + y * surface->pitch  + x * surface->format->BytesPerPixel;
 
     /* Draw the pixel! */
     *p = SDL_MapRGB(surface->format, r, g, b);

@@ -51,9 +51,7 @@ void noSwitch(int argc, char *argv[]) {
     }
 
     imageFile = argv[1];
-    printf("##################\n");
-    decodeImage(imageFile);
-    printf("\n##################\n");
+    decodeImage(imageFile, false);
 
 }
 
@@ -75,14 +73,12 @@ void mSwitch(int argc, char *argv[]) {
 
     basename = argv[2];
     int i = 0;
-    printf("##################\n");
 
     while (1) {
         sprintf(inputPath, "%s-%03d.ppm", basename, i);
         // if the file exists read message from it
         if (access(inputPath, R_OK) != -1) {
-            if (decodeImage(inputPath)) {
-                printf("\n##################\n");
+            if (decodeImage(inputPath, false)) {
                 break;
             }
         } else {
@@ -103,7 +99,8 @@ void dSwitch(int argc, char *argv[]) {
     char *imageDirectory;
     DIR *imageDirectory_ptr;
     char inputImage[PATH_MAX];
-    struct dirent *dir;
+    struct dirent **fileList;
+    int numberOfFiles;
 
     if (argc != 3) {
         usage();
@@ -112,26 +109,24 @@ void dSwitch(int argc, char *argv[]) {
 
     imageDirectory = argv[2];
 
-    imageDirectory_ptr = opendir(imageDirectory);
+    numberOfFiles = scandir(imageDirectory, &fileList, 0, alphasort);
 
-    if (imageDirectory_ptr == NULL) {
-        fprintf(stderr, "\nCould not open directory: %s\n", imageDirectory);
-        exit(1);
+    if (numberOfFiles < 0) {
+        errorAndExit("Could not read input directory", NULL);
     }
 
-    printf("##################\n");
-
-    while ((dir = readdir(imageDirectory_ptr)) != NULL) {
-        if (dir->d_type != DT_DIR) {
-            sprintf(inputImage, "%s/%s", imageDirectory, dir->d_name);
-            if (decodeImage(inputImage)) {
+    for (int i = 0; i < numberOfFiles; i++) {
+        if (fileList[i]->d_type != DT_DIR) {
+            snprintf(inputImage, PATH_MAX, "%s/%s", imageDirectory, fileList[i]->d_name);
+            if (decodeImage(inputImage, true)) {
                 break;
             }
         }
+        free(fileList[i]);
     }
 
-    printf("\n##################\n");
-    closedir(imageDirectory_ptr);
+    free(fileList);
+
 }
 
 /**

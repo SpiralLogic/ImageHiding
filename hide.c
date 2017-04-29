@@ -126,7 +126,7 @@ void mSwitch(int argc, char *argv[]) {
     messageInfo = readFromInput();
     messageInfo->hideMode = multiple;
 
-    for(int i=0; i<num_files; ++i) {
+    for (int i = 0; i < num_files; ++i) {
         sprintf(inputPath, "%s-%03d.ppm", basename, i);
         sprintf(outputPath, "%s-%03d.ppm", outputBasename, i);
 
@@ -137,7 +137,8 @@ void mSwitch(int argc, char *argv[]) {
 
     freeSecretMessageStruct(messageInfo);
     if (messageInfo->currentPos < messageInfo->length) {
-        errorAndExit("Could not hide complete message in images. Please try with more images or a shorter message", NULL);
+        errorAndExit("Could not hide complete message in images. Please try with more images or a shorter message",
+                     NULL);
     }
 }
 
@@ -151,7 +152,7 @@ void pSwitch(int argc, char *argv[]) {
     char *inputFile;
     FILE *inputFile_ptr;
     char textFile[PATH_MAX], inputImage[PATH_MAX], outputImage[PATH_MAX];
-    int currentCommand =0, status = 0;
+    int currentCommand = 0, status = 0;
     // allocate 10 pids for now
     int *pids = malloc(PIDS_TO_STORE * sizeof(int));
 
@@ -167,16 +168,16 @@ void pSwitch(int argc, char *argv[]) {
         errorAndExit("Could not open input text file", NULL);
     }
 
-    while (fscanf(inputFile_ptr, "%s %s %s", textFile, inputImage, outputImage) == 3 && !ferror(inputFile_ptr) && !feof(inputFile_ptr)) {
+    while (fscanf(inputFile_ptr, "%s %s %s", textFile, inputImage, outputImage) == 3 && !ferror(inputFile_ptr)
+        && !feof(inputFile_ptr)) {
         pid_t pid = fork();
 
         if (pid == -1) {
             errorAndExit("Couldn't fork", inputFile_ptr);
         }
         if (pid == 0) {
-            char *arguments[5] = { argv[0], "-f", textFile, inputImage, outputImage };
-            int returnint = execv(arguments[0], arguments);
-            printf("%d\n", returnint);
+            char *arguments[5] = {argv[0], "-f", textFile, inputImage, outputImage};
+            execv(arguments[0], arguments);
             exit(0);
         } else {
             pids[currentCommand] = pid;
@@ -186,7 +187,6 @@ void pSwitch(int argc, char *argv[]) {
                 pids = realloc(pids, (currentCommand + PIDS_TO_STORE) * sizeof(int));
 
                 if (pids == NULL) {
-                    free(pids);
                     errorAndExit("Could not allocate memory", inputFile_ptr);
                 }
             }
@@ -195,12 +195,13 @@ void pSwitch(int argc, char *argv[]) {
 
     free(pids);
 
-    if (ferror(inputFile_ptr)) {
-        errorAndExit("Error reading input file", inputFile_ptr);
+    for (int i = 0; i < currentCommand; i++) {
+        waitpid(pids[i], &status, 0);
     }
 
-    for (int i = 0; i<currentCommand; i++) {
-        waitpid(pids[i], &status, 0);
+    if (ferror(inputFile_ptr)) {
+        fclose(inputFile_ptr);
+        errorAndExit("Error reading input file", inputFile_ptr);
     }
 
     fclose(inputFile_ptr);
@@ -253,7 +254,7 @@ void fSwitch(int argc, char *argv[]) {
     char *inputFile;
     char *outputFile;
     MessageInfo *messageInfo;
-    FILE* messageFile_ptr;
+    FILE *messageFile_ptr;
 
     if (argc != 5) {
         usage();
@@ -293,11 +294,10 @@ void fSwitch(int argc, char *argv[]) {
 void dSwitch(int argc, char *argv[]) {
     char *inputDirectory, *outputDirectory;
     MessageInfo *messageInfo;
-    DIR *inputDirectory_ptr;
+    struct dirent **fileList;
+    int numberOfFiles;
     char inputImage[PATH_MAX], outputImage[PATH_MAX];
-    struct dirent *dir;
     struct stat st;
-
 
     if (argc != 4) {
         usage();
@@ -307,39 +307,38 @@ void dSwitch(int argc, char *argv[]) {
     inputDirectory = argv[2];
     outputDirectory = argv[3];
 
-    inputDirectory_ptr = opendir(inputDirectory);
-
-    if (inputDirectory_ptr == NULL) {
-        fprintf(stderr, "\nCould not open directory: %s\n", inputDirectory);
-        exit(1);
-    }
-
-    if (stat(outputDirectory, &st) != 0)
-    {
+    if (stat(outputDirectory, &st) != 0) {
         if (mkdir(outputDirectory, 0755) == -1) {
-            closedir(inputDirectory_ptr);
             fprintf(stderr, "\nCould not create directory: %s\n", outputDirectory);
             exit(1);
         }
     }
 
-    printf("Input secret message press ctrl+D 1-3 times when finished\n");
-    messageInfo = readFromInput();
-    messageInfo->hideMode = multiple;
+    numberOfFiles = scandir(inputDirectory, &fileList, 0, alphasort);
 
-    while ((dir = readdir(inputDirectory_ptr)) != NULL)
-    {
-        if (dir->d_type != DT_DIR){
-            sprintf(inputImage, "%s/%s", inputDirectory, dir->d_name);
-            sprintf(outputImage, "%s/%s", outputDirectory, dir->d_name);
-
-            printf("Hiding into: %s\n", inputImage);
-            printf("Output as: %s\n", outputImage);
-            encodeMessageInFile(inputImage, outputImage, messageInfo);
-        }
+    if (numberOfFiles < 0) {
+        errorAndExit("Could not read input directory", NULL);
     }
 
-    closedir(inputDirectory_ptr);
+    printf("Input secret message press ctrl+D 1-3 times when finished\n");
+    messageInfo = readFromInput();
+    messageInfo->hideMode = multipleDir;
+
+    for (int i = 0; i < numberOfFiles; i++) {
+        if (fileList[i]->d_type != DT_DIR) {
+            snprintf(inputImage, PATH_MAX, "%s/%s", inputDirectory, fileList[i]->d_name);
+            snprintf(outputImage, PATH_MAX, "%s/%s", outputDirectory, fileList[i]->d_name);
+            printf("Hiding into: %s\n", inputImage);
+            if (encodeMessageInFile(inputImage, outputImage, messageInfo)) {
+                printf("Output as: %s\n", outputImage);
+            }
+        }
+
+        free(fileList[i]);
+    }
+
+    free(fileList);
+
     freeSecretMessageStruct(messageInfo);
     printf("Successfully hid message. Output image directory: %s!\n", outputDirectory);
 }

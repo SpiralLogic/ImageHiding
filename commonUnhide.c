@@ -17,7 +17,7 @@
  * @param inputFile input file to decode message from
  * @return true when complete message was decoded
 */
-bool decodeImage(char* inputFile) {
+bool decodeImage(char* inputFile, bool skipNonImages) {
     char messageChar = (char) '\0';
     int nextByte;
     int currentBit = 0;
@@ -35,8 +35,11 @@ bool decodeImage(char* inputFile) {
     // Work out input image information
     imageType = getImageType(inputFile_ptr);
 
-    if (imageType == unsupported) {
+    if (imageType == unsupported && !skipNonImages) {
         errorAndExit("Image type unsupported", inputFile_ptr);
+    } else if (imageType == unsupported) {
+        printf("Unsupported image %s skipped", inputFile);
+        return false;
     }
 
     if (imageType == ppm) {
