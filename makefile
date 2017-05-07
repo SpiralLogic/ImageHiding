@@ -60,9 +60,19 @@ $(HIDE_PROGRAM)$(DEBUGGING): $(HIDEFILES)
 $(UNHIDE_PROGRAM)$(DEBUGGING): $(UNHIDEFILES)
 	$(CC) $(CFLAGS) -DDEBUG -g -o $(UNHIDE_PROGRAM) $(UNHIDEFILES)
 
+
+#################################
+# test
+#################################
+test: $(HIDE_PROGRAM) $(UNHIDE_PROGRAM)
+	./testsuite && less log.txt
+
 #################################
 # clean
 #################################
 clean:
 	rm -f $(HIDE_PROGRAM) $(UNHIDE_PROGRAM) *.o
 	rm -rf $(OUTPUT_DIRECTORY)
+	rm -rf multi_output/*
+	rm -rf output/*
+	rm -rf pangolin_output/*
