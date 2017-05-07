@@ -28,7 +28,6 @@ ImageInfo verifyAndGetBmpInfo(FILE *file_ptr) {
     return imageInfo;
 };
 
-
 /**
  * Determines the image information of BMP file
  *

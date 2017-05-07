@@ -1,0 +1,3 @@
+test_text/test.txt images/cross.pbm output/output.ppm
+test_text/test2.txt images/dot2.pbm output/dot.ppm
+test_text/test3.txt images/3042.pbm output/3042.ppm

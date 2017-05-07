@@ -19,7 +19,7 @@
  * @param outputFile filename string
  * @param messageInfo secret message info struct
  *
- * @return true when successfully hidden
+ * @return true when successfully finished hiding
  */
 bool encodeMessageInFile(char *inputFile, char *outputFile, MessageInfo *messageInfo) {
     FILE *outfile_ptr, *inputFile_ptr;
@@ -149,7 +149,6 @@ void encodeByteToOutput(int byte, FILE *file_ptr, FILE *outfile_ptr, char *outpu
 }
 
 /**
- *
  * Copies the header from the input image to the output image.
  *
  * @param file_ptr          input file pointer

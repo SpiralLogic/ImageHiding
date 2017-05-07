@@ -142,12 +142,18 @@ message lengths which are too long.
 Piping is supported. Example<br>
 <code>printf "Test" | ./hide input.ppm output.ppm</code>
 
+Current Issues:
+--
+* Any bit stream is supported for hiding messages, but only ascii is supported for unhiding. This is due to the fact that as soon as 255 char is found the message unhide finish
+
+* BMP image comparison is upside down o.o
+
 Example
 --
 <code>printf "This is a message\nhidden in a doge" | ./hide -s images/doge.ppm output.ppm
 </code>
 <pre>
-Input secret message press ctrl+D 1-3 times when finished
+Input secret message press ctrl+D  when finished
 
 Successfully hid message in output.ppm!
 </pre>

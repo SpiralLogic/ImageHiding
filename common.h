@@ -24,6 +24,7 @@ enum ImageType {
  * If the header can't be read successfully an error message is stored
  * so that it can be displayed to the user.
  */
+
 typedef struct {
   enum ImageType type;
   char *filename;

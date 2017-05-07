@@ -97,7 +97,6 @@ void mSwitch(int argc, char *argv[]) {
  */
 void dSwitch(int argc, char *argv[]) {
     char *imageDirectory;
-    DIR *imageDirectory_ptr;
     char inputImage[PATH_MAX];
     struct dirent **fileList;
     int numberOfFiles;
@@ -115,18 +114,19 @@ void dSwitch(int argc, char *argv[]) {
         errorAndExit("Could not read input directory", NULL);
     }
 
+    // needed to make sure full filelist is freed after decode is finihed
+    bool finished = false;
     for (int i = 0; i < numberOfFiles; i++) {
         if (fileList[i]->d_type != DT_DIR) {
             snprintf(inputImage, PATH_MAX, "%s/%s", imageDirectory, fileList[i]->d_name);
-            if (decodeImage(inputImage, true)) {
-                break;
+            if (!finished) {
+                finished = decodeImage(inputImage, true);
             }
         }
         free(fileList[i]);
     }
 
     free(fileList);
-
 }
 
 /**

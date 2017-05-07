@@ -12,12 +12,12 @@
 #include "ppmCommon.h"
 
 /**
- * decodes a 24 bit image from a  file. A EOF marks the end of the encoded message
+ * decodes a message from a 24 bit image file. A EOF marks the end of the encoded message
  *
  * @param inputFile input file to decode message from
  * @return true when complete message was decoded
 */
-bool decodeImage(char* inputFile, bool skipNonImages) {
+bool decodeImage(char *inputFile, bool skipNonImages) {
     char messageChar = (char) '\0';
     int nextByte;
     int currentBit = 0;
@@ -57,8 +57,7 @@ bool decodeImage(char* inputFile, bool skipNonImages) {
 
     // decode message in pixel map
     fseek(inputFile_ptr, imageInfo_ptr->pixelMapOffset, SEEK_SET);
-    while ((nextByte = fgetc(inputFile_ptr)) != EOF)
-    {
+    while ((nextByte = fgetc(inputFile_ptr)) != EOF) {
         // Left shift message character and decode the next bit
         messageChar <<= 1;
         messageChar |= nextByte & 0x01;

@@ -60,7 +60,7 @@ void compareImages(char *image1, char *image2) {
     if (imageType1 != imageType2) {
         fclose(image1_ptr);
         fclose(image2_ptr);
-        errorAndExit("Both images must be of same time", NULL);
+        errorAndExit("Both images must be of same type", NULL);
     }
 
     if (imageType1 == ppm) {
@@ -118,7 +118,6 @@ void compareImages(char *image1, char *image2) {
                     if (Events.type == SDL_QUIT || Events.type == SDL_KEYDOWN)
                         windowOpen = false;
                 }
-
             }
         }
 
@@ -148,11 +147,11 @@ void drawImage(SDL_Surface *surface, FILE *image_ptr, ImageInfo *imageInfo_ptr, 
     // move to the pixel map -1 so the first byte is the the first of the image map
     fseek(image_ptr, imageInfo_ptr->pixelMapOffset, SEEK_SET - 1);
 
-    for (int y=startY; y < imageInfo_ptr->height + startY; y++) {
-        for (int x=startX; x < imageInfo_ptr->width + startX; x++) {
-            r=fgetc(image_ptr);
-            g=fgetc(image_ptr);
-            b=fgetc(image_ptr);
+    for (int y = startY; y < imageInfo_ptr->height + startY; y++) {
+        for (int x = startX; x < imageInfo_ptr->width + startX; x++) {
+            r = fgetc(image_ptr);
+            g = fgetc(image_ptr);
+            b = fgetc(image_ptr);
             drawPixel(surface, x, y, r, g, b);
         }
     }
@@ -170,7 +169,7 @@ void drawImage(SDL_Surface *surface, FILE *image_ptr, ImageInfo *imageInfo_ptr, 
  */
 void drawPixel(SDL_Surface *surface, int x, int y, int r, int g, int b) {
     /* Make p point to the place we want to draw the pixel */
-    int *p = surface->pixels + y * surface->pitch  + x * surface->format->BytesPerPixel;
+    int *p = surface->pixels + y * surface->pitch + x * surface->format->BytesPerPixel;
 
     /* Draw the pixel! */
     *p = SDL_MapRGB(surface->format, r, g, b);

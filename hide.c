@@ -70,7 +70,7 @@ void noSwitch(int argc, char *argv[]) {
     outputFile = argv[2];
 
     // Dunno why sometimes I need to use 3
-    printf("Input secret message press ctrl+D 1-3 times when finished\n");
+    printf("Input secret message press ctrl+D  when finished\n");
 
     messageInfo = readFromInput();
     messageInfo->hideMode = single;
@@ -121,7 +121,7 @@ void mSwitch(int argc, char *argv[]) {
     outputBasename = argv[4];
 
     // Dunno why sometimes I need to use 3
-    printf("Input secret message press ctrl+D 1-3 times when finished\n");
+    printf("Input secret message press ctrl+D  when finished\n");
 
     messageInfo = readFromInput();
     messageInfo->hideMode = multiple;
@@ -134,9 +134,10 @@ void mSwitch(int argc, char *argv[]) {
         printf("Output as: %s\n", outputPath);
         encodeMessageInFile(inputPath, outputPath, messageInfo);
     }
-
+    bool hideComplete = messageInfo->currentPos < messageInfo->length;
     freeSecretMessageStruct(messageInfo);
-    if (messageInfo->currentPos < messageInfo->length) {
+
+    if (hideComplete) {
         errorAndExit("Could not hide complete message in images. Please try with more images or a shorter message",
                      NULL);
     }
@@ -168,6 +169,7 @@ void pSwitch(int argc, char *argv[]) {
         errorAndExit("Could not open input text file", NULL);
     }
 
+    // Scan input file matching "testfile inputimage outputimage" until tehre are none left
     while (fscanf(inputFile_ptr, "%s %s %s", textFile, inputImage, outputImage) == 3 && !ferror(inputFile_ptr)
         && !feof(inputFile_ptr)) {
         pid_t pid = fork();
@@ -176,8 +178,8 @@ void pSwitch(int argc, char *argv[]) {
             errorAndExit("Couldn't fork", inputFile_ptr);
         }
         if (pid == 0) {
-            char *arguments[5] = {argv[0], "-f", textFile, inputImage, outputImage};
-            execv(arguments[0], arguments);
+            char *arguments[6] = {argv[0], "-f", textFile, inputImage, outputImage, '\0'};
+            execv(argv[0], arguments);
             exit(0);
         } else {
             pids[currentCommand] = pid;
@@ -193,11 +195,11 @@ void pSwitch(int argc, char *argv[]) {
         }
     }
 
-    free(pids);
-
     for (int i = 0; i < currentCommand; i++) {
         waitpid(pids[i], &status, 0);
     }
+
+    free(pids);
 
     if (ferror(inputFile_ptr)) {
         fclose(inputFile_ptr);
@@ -230,7 +232,7 @@ void sSwitch(int argc, char *argv[]) {
     outputFile = argv[3];
 
     // Dunno why sometimes I need to use 3
-    printf("Input secret message press ctrl+D 1-3 times when finished\n");
+    printf("Input secret message press ctrl+D  when finished\n");
 
     messageInfo = readFromInput();
     messageInfo->hideMode = single;
@@ -320,7 +322,7 @@ void dSwitch(int argc, char *argv[]) {
         errorAndExit("Could not read input directory", NULL);
     }
 
-    printf("Input secret message press ctrl+D 1-3 times when finished\n");
+    printf("Input secret message press ctrl+D  when finished\n");
     messageInfo = readFromInput();
     messageInfo->hideMode = multipleDir;
 
