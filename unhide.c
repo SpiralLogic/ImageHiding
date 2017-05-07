@@ -114,14 +114,12 @@ void dSwitch(int argc, char *argv[]) {
         errorAndExit("Could not read input directory", NULL);
     }
 
-    // needed to make sure full filelist is freed after decode is finihed
+    // needed to make sure full file list is freed after decode is finihed
     bool finished = false;
     for (int i = 0; i < numberOfFiles; i++) {
-        if (fileList[i]->d_type != DT_DIR) {
+        if (!finished && fileList[i]->d_type != DT_DIR) {
             snprintf(inputImage, PATH_MAX, "%s/%s", imageDirectory, fileList[i]->d_name);
-            if (!finished) {
-                finished = decodeImage(inputImage, true);
-            }
+            finished = decodeImage(inputImage, true);
         }
         free(fileList[i]);
     }

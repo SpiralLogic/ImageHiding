@@ -5,6 +5,7 @@ rm log.txt
 rm -rf outputimages
 mkdir outputimages
 
+printf "\nInvalid input tests\n"
 $VALGRIND ./hide images/6pixels.ppm >> log.txt 2>&1
 $VALGRIND ./hide images/6pixels.ppm outputimages/test1.ppm toomany >> log.txt 2>&1
 $VALGRIND ./unhide >> log.txt 2>&1
@@ -15,14 +16,17 @@ printf "Test won't fit" | $VALGRIND ./hide images/6pixels.ppm outputimages/6pixe
 printf "Test incomplete image" | $VALGRIND ./hide images/incompleteimage.ppm outputimages/6pixels.ppm >> log.txt 2>&1
 printf "Test missing pixel map" | $VALGRIND ./hide images/nopixelmap.ppm outputimages/6pixels.ppm >> log.txt 2>&1
 
+printf "\nMultiple images tests\n"
 printf "multiple" | $VALGRIND ./hide -m 8 multi_images/6pixel multi_output/output >> log.txt 2>&1
 $VALGRIND ./unhide -m multi_output/output  >> log.txt 2>&1
 
+printf "\nParallel processing tests\n"
 $VALGRIND ./hide -p test_text/multiimage.txt  >> log.txt 2>&1
 $VALGRIND ./unhide output/output.ppm  >> log.txt 2>&1
 $VALGRIND ./unhide output/dot.ppm  >> log.txt 2>&1
 $VALGRIND ./unhide output/3042.ppm  >> log.txt 2>&1
 
+printf "\nTest to make sure multiple directories works\n"
 ls -la /etc | $VALGRIND ./hide -d pangolin_images/ pangolin_output >> log.txt 2>&1
 $VALGRIND ./unhide -d pangolin_output  >> log.txt 2>&1
 
